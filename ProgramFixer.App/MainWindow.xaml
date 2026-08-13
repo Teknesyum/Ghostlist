@@ -1,0 +1,143 @@
+<Window x:Class="ProgramFixer.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
+        Title="ProgramFixer • Teknesyum" Icon="Assets/programfixer.ico"
+        Width="1600" Height="1000" MinWidth="1280" MinHeight="820"
+        WindowStyle="None" ResizeMode="CanResize" WindowStartupLocation="CenterScreen"
+        Background="#050507" Foreground="#D1D5DB" StateChanged="Window_StateChanged">
+    <shell:WindowChrome.WindowChrome>
+        <shell:WindowChrome CaptionHeight="40" ResizeBorderThickness="7" CornerRadius="12" GlassFrameThickness="0" UseAeroCaptionButtons="False"/>
+    </shell:WindowChrome.WindowChrome>
+
+    <Window.Resources>
+        <SolidColorBrush x:Key="NeonBlue" Color="#00F3FF"/>
+        <SolidColorBrush x:Key="NeonPink" Color="#FF00EA"/>
+        <SolidColorBrush x:Key="NeonPurple" Color="#B026FF"/>
+        <SolidColorBrush x:Key="Surface" Color="#08090A"/>
+        <SolidColorBrush x:Key="FieldBg" Color="#101214"/>
+
+        <Style TargetType="Button">
+            <Setter Property="Padding" Value="16,9"/><Setter Property="Margin" Value="4"/>
+            <Setter Property="Background" Value="#101214"/><Setter Property="Foreground" Value="#D1D5DB"/>
+            <Setter Property="BorderBrush" Value="#00F3FF"/><Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Cursor" Value="Hand"/><Setter Property="FontFamily" Value="Segoe UI"/><Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+        <Style x:Key="PrimaryButton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Background" Value="#06282C"/><Setter Property="Foreground" Value="{StaticResource NeonBlue}"/>
+        </Style>
+        <Style x:Key="DangerButton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Background" Value="#260522"/><Setter Property="BorderBrush" Value="{StaticResource NeonPink}"/><Setter Property="Foreground" Value="{StaticResource NeonPink}"/>
+        </Style>
+        <Style x:Key="CaptionButton" TargetType="Button">
+            <Setter Property="Width" Value="56"/><Setter Property="Height" Value="40"/><Setter Property="Padding" Value="0"/><Setter Property="Margin" Value="0"/>
+            <Setter Property="Background" Value="Transparent"/><Setter Property="Foreground" Value="#F3F4F6"/><Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/><Setter Property="FontSize" Value="18"/><Setter Property="FontWeight" Value="SemiBold"/><Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="shell:WindowChrome.IsHitTestVisibleInChrome" Value="True"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True"><Setter Property="Background" Value="#2300F3FF"/><Setter Property="Foreground" Value="{StaticResource NeonBlue}"/></Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="CloseCaptionButton" TargetType="Button" BasedOn="{StaticResource CaptionButton}">
+            <Style.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter Property="Background" Value="#30FF00EA"/><Setter Property="Foreground" Value="{StaticResource NeonPink}"/></Trigger></Style.Triggers>
+        </Style>
+        <Style TargetType="TextBlock"><Setter Property="TextWrapping" Value="Wrap"/><Setter Property="FontFamily" Value="Segoe UI"/></Style>
+        <Style TargetType="CheckBox"><Setter Property="Foreground" Value="#D1D5DB"/><Setter Property="VerticalAlignment" Value="Center"/></Style>
+        <Style x:Key="FooterLink" TargetType="Hyperlink">
+            <Setter Property="Foreground" Value="{StaticResource NeonBlue}"/><Setter Property="TextDecorations" Value="{x:Null}"/><Setter Property="Cursor" Value="Hand"/>
+            <Style.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter Property="Foreground" Value="{StaticResource NeonPink}"/><Setter Property="TextDecorations" Value="Underline"/></Trigger></Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <Border Background="#050507" BorderBrush="#5000F3FF" BorderThickness="1" CornerRadius="12">
+        <Grid>
+            <Grid.RowDefinitions><RowDefinition Height="40"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+
+            <!-- Runly uyumlu özel pencere başlığı -->
+            <Grid Grid.Row="0" Background="{StaticResource Surface}">
+                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                <StackPanel Orientation="Horizontal" Margin="14,0,0,0" VerticalAlignment="Center">
+                    <Image Width="20" Height="20" Source="Assets/programfixer.ico" Margin="0,0,9,0"/>
+                    <TextBlock Text="ProgramFixer • Teknesyum" Foreground="{StaticResource NeonBlue}" VerticalAlignment="Center" FontSize="13.5"/>
+                </StackPanel>
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button Style="{StaticResource CaptionButton}" Content="—" ToolTip="Küçült" Click="Minimize_Click"/>
+                    <Button x:Name="MaximizeButton" Style="{StaticResource CaptionButton}" Content="▢" ToolTip="Büyüt" Click="MaximizeRestore_Click"/>
+                    <Button Style="{StaticResource CloseCaptionButton}" Content="×" ToolTip="Kapat" Click="Close_Click"/>
+                </StackPanel>
+                <Border VerticalAlignment="Bottom" Height="1" Background="#5000F3FF"/>
+            </Grid>
+
+            <Grid Grid.Row="1" Margin="24,20,24,18">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/>
+                    <RowDefinition Height="220"/><RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Grid Margin="0,0,0,16">
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock FontFamily="Cascadia Mono,Consolas" FontSize="32" FontWeight="Bold" Foreground="{StaticResource NeonBlue}" Text="PROGRAM"/>
+                            <TextBlock FontFamily="Cascadia Mono,Consolas" FontSize="32" FontWeight="Bold" Foreground="{StaticResource NeonPurple}" Text="FIXER"/>
+                        </StackPanel>
+                        <TextBlock Foreground="#9CA3AF" FontSize="14" Text="Kayıp kaldırıcıları tespit et  •  güvenle yedekle  •  yetim kayıtları düzelt"/>
+                    </StackPanel>
+                    <Border Grid.Column="1" Padding="14,8" BorderBrush="{StaticResource NeonPurple}" BorderThickness="1" CornerRadius="14" Background="#16041E">
+                        <TextBlock Foreground="#E8C6FF" FontWeight="Bold" Text="WINDOWS 10 / 11  •  x64"/>
+                    </Border>
+                </Grid>
+
+                <Border Grid.Row="1" Padding="8" Margin="0,0,0,10" Background="{StaticResource Surface}" BorderBrush="#25282C" BorderThickness="1" CornerRadius="7">
+                    <DockPanel>
+                        <CheckBox x:Name="BrokenOnlyCheckBox" DockPanel.Dock="Left" Content="Yalnızca bozukları göster" Margin="10,0,15,0" Checked="FilterChanged" Unchecked="FilterChanged"/>
+                        <Button DockPanel.Dock="Left" Content="ℹ  Bilgi" ToolTip="ProgramFixer ne işe yarar?" Click="Info_Click"/>
+                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Content="Tümünü Seç" Click="SelectAll_Click"/><Button Content="Seçimi Temizle" Click="ClearSelection_Click"/>
+                            <Button Content="Yeniden Tara" Click="Scan_Click"/><Button Content="Yedeği Geri Yükle" Click="Restore_Click"/>
+                            <Button x:Name="FixSelectedButton" Style="{StaticResource PrimaryButton}" Content="Seçilileri Fixle" Click="FixSelected_Click"/>
+                            <Button x:Name="FixAllButton" Style="{StaticResource DangerButton}" Content="Tüm Bozukları Fixle" Click="FixAll_Click"/>
+                        </StackPanel>
+                    </DockPanel>
+                </Border>
+
+                <Border Grid.Row="2" Background="{StaticResource Surface}" BorderBrush="#25282C" BorderThickness="1" CornerRadius="8">
+                    <DataGrid x:Name="EntriesGrid" AutoGenerateColumns="False" IsReadOnly="False" SelectionMode="Single" SelectionChanged="EntriesGrid_SelectionChanged"
+                              Background="{StaticResource FieldBg}" Foreground="#D1D5DB" RowBackground="#101214" AlternatingRowBackground="#151719"
+                              GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#25282C" HeadersVisibility="Column" BorderThickness="0" RowHeight="34">
+                        <DataGrid.ColumnHeaderStyle><Style TargetType="DataGridColumnHeader"><Setter Property="Background" Value="#08090A"/><Setter Property="Foreground" Value="{StaticResource NeonBlue}"/><Setter Property="Padding" Value="10"/><Setter Property="BorderBrush" Value="#25282C"/></Style></DataGrid.ColumnHeaderStyle>
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn Header="Seç" Width="58"><DataGridTemplateColumn.CellTemplate><DataTemplate><CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center"/></DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
+                            <DataGridTextColumn Header="Uygulama" Binding="{Binding DisplayName}" IsReadOnly="True" Width="*"/>
+                            <DataGridTextColumn Header="Sürüm" Binding="{Binding DisplayVersion}" IsReadOnly="True" Width="120"/>
+                            <DataGridTextColumn Header="Yayıncı" Binding="{Binding Publisher}" IsReadOnly="True" Width="210"/>
+                            <DataGridTextColumn Header="Durum" Binding="{Binding StatusText}" IsReadOnly="True" Width="150"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Border>
+
+                <Border Grid.Row="3" Margin="0,12,0,0" Padding="16" Background="{StaticResource Surface}" BorderBrush="{StaticResource NeonPurple}" BorderThickness="1" CornerRadius="8">
+                    <Grid><Grid.RowDefinitions><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                        <StackPanel><TextBlock x:Name="DetailName" FontSize="20" FontWeight="SemiBold" Foreground="{StaticResource NeonBlue}" Text="Bir uygulama seçin"/>
+                            <TextBlock x:Name="DetailReason" Margin="0,8,0,0" Foreground="#F7C85A"/><TextBlock x:Name="DetailTarget" Margin="0,6,0,0" Foreground="#D1D5DB"/>
+                            <TextBlock x:Name="DetailRegistry" Margin="0,6,0,0" Foreground="#6B7280"/></StackPanel>
+                        <TextBlock x:Name="StatusText" Grid.Row="1" Margin="0,10,0,0" Foreground="{StaticResource NeonBlue}" FontFamily="Cascadia Mono,Consolas"/>
+                    </Grid>
+                </Border>
+
+                <Grid Grid.Row="4" Margin="2,12,2,0">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock Foreground="#4B5563" Text="●" Margin="0,0,5,0"/>
+                        <TextBlock Foreground="{StaticResource NeonBlue}" Text="Hazır" Margin="0,0,14,0"/>
+                        <TextBlock x:Name="FooterVersion" Foreground="{StaticResource NeonBlue}" FontFamily="Cascadia Mono,Consolas" Margin="0,0,14,0"/>
+                        <TextBlock Foreground="#6B7280" Text="Her işlemden önce ayrı yedek alınır  •  Program dosyaları silinmez"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                        <TextBlock Margin="0,0,14,0"><Hyperlink Style="{StaticResource FooterLink}" NavigateUri="https://github.com/sponsors/Teknesyum" RequestNavigate="FooterLink_RequestNavigate">Buy me a coffee</Hyperlink></TextBlock>
+                        <TextBlock><Hyperlink Style="{StaticResource FooterLink}" NavigateUri="https://github.com/Teknesyum" RequestNavigate="FooterLink_RequestNavigate">Teknesyum</Hyperlink></TextBlock>
+                    </StackPanel>
+                </Grid>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>
