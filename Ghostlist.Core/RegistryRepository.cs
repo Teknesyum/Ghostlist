@@ -190,32 +190,3 @@ public sealed class WindowsUninstallRepository(IRegistryHiveAccessor accessor) :
         };
     }
 }
-
-public sealed class CleanupService(IUninstallRepository repository, EntryClassifier classifier, string backupDirectory)
-{
-    private static readonly JsonSerializerOptions JsonOptions = new() { WriteIndented = true };
-
-    public IReadOnlyList<UninstallEntry> Scan() => repository.Scan().Select(classifier.Classify).ToList();
-
-    public string RemoveBrokenEntry(UninstallEntry entry)
-    {
-        if (entry.Status != EntryStatus.Broken) throw new InvalidOperationException("Yalnızca doğrulanmış bozuk kayıtlar kaldırılabilir.");
-        Directory.CreateDirectory(backupDirectory);
-        var backup = repository.Capture(entry);
-        var safeName = string.Concat(entry.DisplayName.Select(c => Path.GetInvalidFileNameChars().Contains(c) ? '_' : c));
-        var path = Path.Combine(backupDirectory, $"{DateTime.Now:yyyyMMdd-HHmmss}-{safeName}-{Guid.NewGuid():N}.json");
-        File.WriteAllText(path, JsonSerializer.Serialize(backup, JsonOptions));
-        repository.Delete(entry.Location);
-        return path;
-    }
-
-    public void Restore(string path)
-    {
-        var relativePath = Path.GetRelativePath(Path.GetFullPath(backupDirectory), Path.GetFullPath(path));
-        if (Path.IsPathRooted(relativePath) || relativePath == ".." || relativePath.StartsWith($"..{Path.DirectorySeparatorChar}", StringComparison.Ordinal))
-            throw new InvalidOperationException("Yalnızca Ghostlist yedekleri geri yüklenebilir.");
-        var backup = JsonSerializer.Deserialize<RegistryTreeBackup>(File.ReadAllText(path), JsonOptions)
-            ?? throw new InvalidDataException("Yedek dosyası geçersiz.");
-        repository.Restore(backup);
-    }
-}

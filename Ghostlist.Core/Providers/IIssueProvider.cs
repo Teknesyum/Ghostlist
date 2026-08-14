@@ -1,0 +1,18 @@
+namespace Ghostlist.Core;
+
+public interface IBackupSink
+{
+    string SaveRegistryTree(RegistryTreeBackup backup, string label);
+    string MoveFileToBackup(string sourcePath, string label);
+    string SaveText(string content, string label, string extension);
+    void Restore(string backupPath);
+    IReadOnlyList<string> List();
+}
+
+public interface IIssueProvider
+{
+    string Id { get; }
+    string Category { get; }
+    IReadOnlyList<Finding> Scan();
+    FixResult Fix(Finding finding, IBackupSink backup);
+}

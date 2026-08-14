@@ -69,7 +69,7 @@ public class UninstallCommandResolutionTests
         var location = new RegistryLocation(RegistryHive.CurrentUser, RegistryView.Registry64, @"SOFTWARE\Test\Relative");
         var entry = new UninstallEntry("id", "Relative App", null, null, "unins000.exe /S", null, null, false, false, location);
 
-        var classified = new EntryClassifier(new MissingFileSystem()).Classify(entry);
+        var classified = new EntryClassifier(new ClassifierTests.FakeFileSystem()).Classify(entry);
 
         Assert.Equal(EntryStatus.Suspicious, classified.Status);
         Assert.Null(classified.ResolvedTarget);
@@ -107,6 +107,4 @@ public class UninstallCommandResolutionTests
     [InlineData("msiexec /x GhostApp")]
     public void MsiProductCodeIsNullWhenAbsent(string? command)
         => Assert.Null(UninstallCommandParser.ResolveMsiProductCode(command));
-
-    private sealed class MissingFileSystem : IFileSystem { public bool FileExists(string path) => false; }
 }
