@@ -22,15 +22,23 @@ public sealed class MainViewModel : ObservableObject
 
     private bool isBusy;
     private bool brokenOnly;
+    private bool showBackups;
     private string statusMessage;
     private FindingViewModel? selected;
     private DialogRequest? dialog;
 
     public MainViewModel(CleanupService service, AppSettings settings)
+        : this(service, settings, new BackupCatalog(BackupPaths.BackupDirectory), new OperationHistory()) { }
+
+    public MainViewModel(CleanupService service, AppSettings settings, BackupCatalog catalog, OperationHistory history)
     {
         this.service = service;
         this.settings = settings;
         statusMessage = Strings.Current.Get("status.ready");
+
+        Backups = new BackupsViewModel(service, catalog, history, ShowDialogAsync, ScanAsync);
+        ShowFindingsCommand = new RelayCommand(() => ShowBackups = false);
+        ShowBackupsCommand = new RelayCommand(() => ShowBackups = true);
 
         var version = Assembly.GetExecutingAssembly().GetName().Version;
         VersionNumber = $"{version?.Major ?? 1}.{version?.Minor ?? 0}.{version?.Build ?? 0}";
@@ -66,6 +74,23 @@ public sealed class MainViewModel : ObservableObject
     public RelayCommand InfoCommand { get; }
     public RelayCommand ElevateCommand { get; }
     public RelayCommand LanguageCommand { get; }
+    public RelayCommand ShowFindingsCommand { get; }
+    public RelayCommand ShowBackupsCommand { get; }
+
+    public BackupsViewModel Backups { get; }
+
+    public bool ShowBackups
+    {
+        get => showBackups;
+        set
+        {
+            if (!Set(ref showBackups, value)) return;
+            Raise(nameof(ShowFindings));
+            if (value) Backups.Reload();
+        }
+    }
+
+    public bool ShowFindings => !showBackups;
 
     public string VersionNumber { get; }
 
@@ -270,11 +295,16 @@ public sealed class MainViewModel : ObservableObject
                 try
                 {
                     var result = await Task.Run(() => service.Fix(item.Model));
+                    Backups.RecordFix(item.Category, item.Title, result.ResultKey, result.BackupPath);
                     if (result.Success) completed++;
                     else if (result.ManualCommand is not null) manual.Add($"{item.Title}: {result.ManualCommand}");
                     else failures.Add($"{item.Title}: {Strings.Current.Get($"result.{result.ResultKey}")}");
                 }
-                catch (Exception ex) { failures.Add($"{item.Title}: {ex.Message}"); }
+                catch (Exception ex)
+                {
+                    Backups.RecordFix(item.Category, item.Title, FixResultKeys.Failed, null);
+                    failures.Add($"{item.Title}: {ex.Message}");
+                }
             }
         }
         finally { IsBusy = false; }
@@ -313,6 +343,7 @@ public sealed class MainViewModel : ObservableObject
         try
         {
             await Task.Run(() => service.Restore(picker.FileName));
+            Backups.RecordRestore(picker.FileName);
             StatusMessage = Strings.Current.Get("status.restored");
         }
         catch (Exception ex)
