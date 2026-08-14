@@ -1,4 +1,4 @@
-namespace ProgramFixer.Core;
+namespace Ghostlist.Core;
 
 public interface IFileSystem { bool FileExists(string path); }
 public sealed class PhysicalFileSystem : IFileSystem { public bool FileExists(string path) => File.Exists(path); }

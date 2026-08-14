@@ -1,6 +1,6 @@
 using Microsoft.Win32;
 
-namespace ProgramFixer.Core;
+namespace Ghostlist.Core;
 
 public enum EntryStatus { Healthy, Broken, Suspicious, Unsupported }
 

@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ProgramFixer.Core\ProgramFixer.Core.csproj" />
+    <ProjectReference Include="..\Ghostlist.Core\Ghostlist.Core.csproj" />
   </ItemGroup>
 
 </Project>

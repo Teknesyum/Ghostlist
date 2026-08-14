@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\ProgramFixer.Core\ProgramFixer.Core.csproj" />
-    <Resource Include="Assets\programfixer.ico" />
+    <ProjectReference Include="..\Ghostlist.Core\Ghostlist.Core.csproj" />
+    <Resource Include="Assets\ghostlist.ico" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -11,8 +11,8 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
-    <ApplicationIcon>Assets\programfixer.ico</ApplicationIcon>
-    <AssemblyName>ProgramFixer</AssemblyName>
+    <ApplicationIcon>Assets\ghostlist.ico</ApplicationIcon>
+    <AssemblyName>Ghostlist</AssemblyName>
     <Version>1.0.0</Version>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <FileVersion>1.0.0.0</FileVersion>

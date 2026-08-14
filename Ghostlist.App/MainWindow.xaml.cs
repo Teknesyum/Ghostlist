@@ -1,5 +1,5 @@
 using Microsoft.Win32;
-using ProgramFixer.Core;
+using Ghostlist.Core;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -9,7 +9,7 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Navigation;
 
-namespace ProgramFixer.App;
+namespace Ghostlist.App;
 
 public partial class MainWindow : Window
 {
@@ -27,8 +27,8 @@ public partial class MainWindow : Window
         MinHeight = Math.Min(820, workArea.Height);
         var version = Assembly.GetExecutingAssembly().GetName().Version;
         FooterVersion.Text = $"Sürüm: v{version?.Major ?? 1}.{version?.Minor ?? 0}.{version?.Build ?? 0}";
-        var backupDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "ProgramFixer", "Backups");
-        service = new CleanupService(new WindowsUninstallRepository(), new EntryClassifier(new PhysicalFileSystem()), backupDir);
+        BackupPaths.MigrateLegacyBackups();
+        service = new CleanupService(new WindowsUninstallRepository(), new EntryClassifier(new PhysicalFileSystem()), BackupPaths.BackupDirectory);
         view = CollectionViewSource.GetDefaultView(entries);
         view.Filter = item => BrokenOnlyCheckBox.IsChecked != true || ((UninstallEntry)item).Status == EntryStatus.Broken;
         EntriesGrid.ItemsSource = view;
@@ -76,10 +76,10 @@ public partial class MainWindow : Window
     private void Info_Click(object sender, RoutedEventArgs e)
     {
         MessageBox.Show(
-            "ProgramFixer, Windows 'Yüklü uygulamalar' listesindeki kaldırıcı dosyası kaybolmuş yetim kayıtları tespit eder.\n\n" +
+            "Ghostlist, Windows 'Yüklü uygulamalar' listesindeki kaldırıcı dosyası kaybolmuş yetim kayıtları tespit eder.\n\n" +
             "Düzeltme sırasında yalnızca doğrulanmış bozuk kayıt kaldırılır ve önce geri yüklenebilir bir yedek oluşturulur. " +
             "Program klasörleri ile kişisel dosyalarınız silinmez.",
-            "ProgramFixer hakkında",
+            "Ghostlist hakkında",
             MessageBoxButton.OK,
             MessageBoxImage.Information);
     }
@@ -130,7 +130,7 @@ public partial class MainWindow : Window
         var broken = entries.Where(x => x.Status == EntryStatus.Broken).ToList();
         if (broken.Count == 0)
         {
-            MessageBox.Show("Düzeltilebilecek bozuk kayıt bulunmuyor.", "ProgramFixer", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show("Düzeltilebilecek bozuk kayıt bulunmuyor.", "Ghostlist", MessageBoxButton.OK, MessageBoxImage.Information);
             return;
         }
         await FixEntriesAsync(broken, $"Tespit edilen {broken.Count} bozuk kaydın tamamı", 0);
@@ -142,7 +142,7 @@ public partial class MainWindow : Window
             $"{description} düzeltilecek.\n\nHer kayıt ayrı ayrı yedeklenecek ve yalnızca Windows 'Yüklü uygulamalar' girdileri kaldırılacak. Program klasörleri ve kullanıcı dosyaları silinmeyecek." +
             (protectedCount > 0 ? $"\n\n{protectedCount} uygun olmayan seçili kayıt güvenlik nedeniyle atlanacak." : string.Empty) +
             "\n\nDevam edilsin mi?",
-            "ProgramFixer toplu düzeltme", MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No);
+            "Ghostlist toplu düzeltme", MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No);
         if (answer != MessageBoxResult.Yes) return;
 
         SetBusy(true, $"0/{targets.Count} kayıt düzeltiliyor…");
@@ -173,9 +173,9 @@ public partial class MainWindow : Window
 
     private async void Restore_Click(object sender, RoutedEventArgs e)
     {
-        var backupDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "ProgramFixer", "Backups");
+        var backupDir = BackupPaths.BackupDirectory;
         Directory.CreateDirectory(backupDir);
-        var dialog = new OpenFileDialog { Title = "ProgramFixer yedeğini seçin", Filter = "ProgramFixer yedeği (*.json)|*.json", InitialDirectory = backupDir };
+        var dialog = new OpenFileDialog { Title = "Ghostlist yedeğini seçin", Filter = "Ghostlist yedeği (*.json)|*.json", InitialDirectory = backupDir };
         if (dialog.ShowDialog() != true) return;
         try
         {
@@ -194,5 +194,5 @@ public partial class MainWindow : Window
         if (message is not null) StatusText.Text = message;
     }
 
-    private static void ShowError(Exception ex) => MessageBox.Show(ex.Message, "ProgramFixer hatası", MessageBoxButton.OK, MessageBoxImage.Error);
+    private static void ShowError(Exception ex) => MessageBox.Show(ex.Message, "Ghostlist hatası", MessageBoxButton.OK, MessageBoxImage.Error);
 }

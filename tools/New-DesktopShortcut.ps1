@@ -1,6 +1,6 @@
 param(
     [Parameter(Mandatory = $true)][string]$TargetPath,
-    [string]$ShortcutName = "ProgramFixer.lnk"
+    [string]$ShortcutName = "Ghostlist.lnk"
 )
 
 $target = (Resolve-Path -LiteralPath $TargetPath).Path
@@ -11,7 +11,7 @@ $shortcut = $shell.CreateShortcut($shortcutPath)
 $shortcut.TargetPath = $target
 $shortcut.WorkingDirectory = Split-Path $target
 $shortcut.IconLocation = "$target,0"
-$shortcut.Description = "ProgramFixer - Teknesyum"
+$shortcut.Description = "Ghostlist - Teknesyum"
 $shortcut.Save()
 
 $saved = $shell.CreateShortcut($shortcutPath)

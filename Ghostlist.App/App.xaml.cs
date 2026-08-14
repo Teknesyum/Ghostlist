@@ -2,7 +2,7 @@
 using System.Data;
 using System.Windows;
 
-namespace ProgramFixer.App;
+namespace Ghostlist.App;
 
 /// <summary>
 /// Interaction logic for App.xaml

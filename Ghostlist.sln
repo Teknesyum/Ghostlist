@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProgramFixer.App", "ProgramFixer.App\ProgramFixer.App.csproj", "{4684623A-4B38-4D16-A11E-83A20F181238}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ghostlist.App", "Ghostlist.App\Ghostlist.App.csproj", "{4684623A-4B38-4D16-A11E-83A20F181238}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProgramFixer.Core", "ProgramFixer.Core\ProgramFixer.Core.csproj", "{7972FB7E-EA84-4BA1-B3A8-E02652365E2A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ghostlist.Core", "Ghostlist.Core\Ghostlist.Core.csproj", "{7972FB7E-EA84-4BA1-B3A8-E02652365E2A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProgramFixer.Tests", "ProgramFixer.Tests\ProgramFixer.Tests.csproj", "{532BEE5F-43F8-4DBD-92F2-B1B18A645CB7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ghostlist.Tests", "Ghostlist.Tests\Ghostlist.Tests.csproj", "{532BEE5F-43F8-4DBD-92F2-B1B18A645CB7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

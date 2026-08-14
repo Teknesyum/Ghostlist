@@ -1,7 +1,7 @@
-﻿<Application x:Class="ProgramFixer.App.App"
+﻿<Application x:Class="Ghostlist.App.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:ProgramFixer.App"
+             xmlns:local="clr-namespace:Ghostlist.App"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
          

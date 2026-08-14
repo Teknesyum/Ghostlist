@@ -1,4 +1,4 @@
-param([string]$ShortcutName = "ProgramFixer.lnk")
+param([string]$ShortcutName = "Ghostlist.lnk")
 
 $desktop = [Environment]::GetFolderPath([Environment+SpecialFolder]::Desktop)
 $shortcutPath = Join-Path $desktop $ShortcutName
@@ -32,7 +32,7 @@ if ($result.TargetExists) {
 if ($result.ShortcutExists -and $result.TargetExists) {
     Start-Process -FilePath $shortcutPath
     Start-Sleep -Seconds 4
-    $matching = Get-Process -Name "ProgramFixer" -ErrorAction SilentlyContinue |
+    $matching = Get-Process -Name "Ghostlist" -ErrorAction SilentlyContinue |
         Where-Object { $_.Path -eq $shortcut.TargetPath }
     $result.ShortcutLaunchAlive = $null -ne $matching
     $matching | Stop-Process
@@ -43,7 +43,7 @@ if ($result.ShortcutExists -and $result.TargetExists) {
 Get-WinEvent -FilterHashtable @{ LogName = "Application"; StartTime = (Get-Date).AddMinutes(-10) } -ErrorAction SilentlyContinue |
     Where-Object {
         $_.ProviderName -in @(".NET Runtime", "Application Error", "Windows Error Reporting") -and
-        $_.Message -match "ProgramFixer"
+        $_.Message -match "Ghostlist"
     } |
     Select-Object -First 5 TimeCreated, ProviderName, Id, Message |
     Format-List

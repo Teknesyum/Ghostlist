@@ -1,11 +1,11 @@
 using Microsoft.Win32;
-using ProgramFixer.Core;
+using Ghostlist.Core;
 
-namespace ProgramFixer.Tests;
+namespace Ghostlist.Tests;
 
 public class CleanupServiceTests : IDisposable
 {
-    private readonly string directory = Path.Combine(Path.GetTempPath(), "ProgramFixerTests", Guid.NewGuid().ToString("N"));
+    private readonly string directory = Path.Combine(Path.GetTempPath(), "GhostlistTests", Guid.NewGuid().ToString("N"));
 
     [Fact]
     public void BrokenEntryIsBackedUpBeforeDeletionAndCanBeRestored()
@@ -32,11 +32,11 @@ public class CleanupServiceTests : IDisposable
     }
 
     [Fact]
-    public void BackupOutsideProgramFixerDirectoryCannotBeRestored()
+    public void BackupOutsideGhostlistDirectoryCannotBeRestored()
     {
         var repository = new FakeRepository();
         var service = new CleanupService(repository, new EntryClassifier(new MissingFileSystem()), directory);
-        var outside = Path.Combine(Path.GetDirectoryName(directory)!, "ProgramFixerTests-Outside", "backup.json");
+        var outside = Path.Combine(Path.GetDirectoryName(directory)!, "GhostlistTests-Outside", "backup.json");
 
         Assert.Throws<InvalidOperationException>(() => service.Restore(outside));
         Assert.False(repository.Restored);
@@ -57,8 +57,8 @@ public class CleanupServiceTests : IDisposable
         public bool Deleted { get; private set; }
         public bool Restored { get; private set; }
         public IReadOnlyList<UninstallEntry> Scan() => [Entry];
-        public RegistryBackup Capture(UninstallEntry entry) => new(location, entry.DisplayName, DateTimeOffset.Now, [new("DisplayName", RegistryValueKind.String, entry.DisplayName)]);
+        public RegistryTreeBackup Capture(UninstallEntry entry) => new(location, entry.DisplayName, DateTimeOffset.Now, [new("DisplayName", RegistryValueKind.String, entry.DisplayName)]);
         public void Delete(RegistryLocation _) => Deleted = true;
-        public void Restore(RegistryBackup _) => Restored = true;
+        public void Restore(RegistryTreeBackup _) => Restored = true;
     }
 }

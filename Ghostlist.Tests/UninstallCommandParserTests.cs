@@ -1,6 +1,6 @@
-using ProgramFixer.Core;
+using Ghostlist.Core;
 
-namespace ProgramFixer.Tests;
+namespace Ghostlist.Tests;
 
 public class UninstallCommandParserTests
 {
