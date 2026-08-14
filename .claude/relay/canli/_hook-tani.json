@@ -1,0 +1,24 @@
+{
+  "toplam": 3,
+  "ajanli": 1,
+  "olaylar": {
+    "PostToolUse": 2,
+    "SubagentStop": 1
+  },
+  "ilk": "2026-08-14 23:01:02",
+  "son": "2026-08-14 23:01:49",
+  "ornek_alanlar": [
+    "cwd",
+    "duration_ms",
+    "effort",
+    "hook_event_name",
+    "permission_mode",
+    "prompt_id",
+    "session_id",
+    "tool_input",
+    "tool_name",
+    "tool_response",
+    "tool_use_id",
+    "transcript_path"
+  ]
+}

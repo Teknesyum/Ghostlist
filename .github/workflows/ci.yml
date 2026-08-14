@@ -16,6 +16,22 @@ jobs:
         with:
           dotnet-version: 8.0.x
 
+      - name: Check README version line
+        shell: pwsh
+        run: |
+          $props = [xml](Get-Content Directory.Build.props -Raw)
+          $propsVersion = $props.Project.PropertyGroup.Version
+          $lines = @(Get-Content README.md | Where-Object { $_ -match 'v?\d+\.\d+\.\d+' })
+          if ($lines.Count -ne 1) {
+            Write-Host "::warning::README.md should mention the version on exactly one line, but $($lines.Count) lines carry a version number. Keep Directory.Build.props the single source of truth."
+          }
+          elseif ($lines[0] -notmatch [regex]::Escape($propsVersion)) {
+            Write-Host "::warning::README.md version line does not match Directory.Build.props ($propsVersion). Line: $($lines[0].Trim())"
+          }
+          else {
+            Write-Host "README version line matches Directory.Build.props ($propsVersion)."
+          }
+
       - name: Restore
         run: dotnet restore Ghostlist.sln
 

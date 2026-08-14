@@ -104,7 +104,7 @@ Current version: **v2.0.0** (formerly ProgramFixer)
 
 Version 2 renames the project, widens it from uninstall entries alone to six categories, replaces the old pass/fail check with evidence-based scoring, and changes the backup format. Backups taken by version 1 are migrated on first launch.
 
-Download: [Ghostlist v2.0.0 for Windows x64](https://github.com/Teknesyum/Ghostlist/releases/tag/v2.0.0)
+Download: [Ghostlist for Windows x64](https://github.com/Teknesyum/Ghostlist/releases/latest)
 
 ---
 

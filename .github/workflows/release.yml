@@ -17,6 +17,23 @@ jobs:
         with:
           dotnet-version: 8.0.x
 
+      - name: Verify tag matches Directory.Build.props
+        shell: pwsh
+        run: |
+          $tag = "${{ github.ref_name }}"
+          $tagVersion = $tag -replace '^v', ''
+          $props = [xml](Get-Content Directory.Build.props -Raw)
+          $propsVersion = $props.Project.PropertyGroup.Version
+          if (-not $propsVersion) {
+            Write-Host "::error::Directory.Build.props does not define a <Version> element."
+            exit 1
+          }
+          if ($tagVersion -ne $propsVersion) {
+            Write-Host "::error::Version mismatch. Tag '$tag' means version '$tagVersion' but Directory.Build.props declares '$propsVersion'. Update Directory.Build.props (or retag) before releasing; a wrong published version cannot be taken back."
+            exit 1
+          }
+          Write-Host "Version gate passed: tag $tag matches Directory.Build.props $propsVersion."
+
       - name: Test
         run: dotnet test Ghostlist.sln -c Release
 

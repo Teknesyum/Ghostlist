@@ -16,3 +16,5 @@
 2026-08-14 T6  owns genisletildi: Ghostlist.Tests.csproj (CLI proje basvurusu), ViewModels/MainViewModel.cs (T5, toplu duzeltme oncesi geri yukleme noktasi), .gitignore (publish/ + release zip)
 2026-08-15 T7  owns genisletildi: assets/ (Ingilizce arayuz ekran goruntusu), Ghostlist.App.csproj + Ghostlist.Cli.csproj (kriter 7 icin v2.0.0 surum numarasi)
 2026-08-15 T7  done: README Ingilizce yeniden yazildi (guvenlik modeli + CLI + v2.0.0), docs/GUVENLIK.md eklendi, install.ps1 uninstall.ps1i de kuruyor, dort yonlendirici CLAUDE.md (<=20 satir), surum v2.0.0; build 0 uyari, test 153/153
+2026-08-15 T8  owns genisletildi: README.md (kriter 3 surum satiri, T12'nin yan_etkisi), Ghostlist.Tests/VersionTests.cs (kriter 7 testi)
+2026-08-15 T8  done: Directory.Build.props tek kaynak (surum+Company/Product/Copyright), csproj surum satirlari silindi, release.yml tag<->props surum kapisi (uyusmazsa yayin duser), ci.yml README surum uyarisi, install.ps1 SHA256 dogrulamasi + ayri cikis kodlari (2/3/4/5) + kismi kurulum yok, uninstall.ps1 calisiyorsa durur (6) ve yedekleri korur; build 0 uyari, test 159/159

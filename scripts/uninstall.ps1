@@ -1,9 +1,25 @@
+param(
+    [switch]$Force
+)
+
 $ErrorActionPreference = "Stop"
 $installDirectory = Split-Path -Parent $PSCommandPath
 $desktop = [Environment]::GetFolderPath([Environment+SpecialFolder]::Desktop)
 $shortcutPath = Join-Path $desktop "Ghostlist.lnk"
+$backupDirectory = Join-Path $env:LOCALAPPDATA "Ghostlist\Backups"
 
-Get-Process -Name "Ghostlist" -ErrorAction SilentlyContinue | Stop-Process -Force
+$running = @(Get-Process -Name "Ghostlist" -ErrorAction SilentlyContinue)
+if ($running.Count -gt 0) {
+    if (-not $Force) {
+        Write-Host "Ghostlist is still running. Close it and run this script again, or re-run with -Force to close it automatically." -ForegroundColor Yellow
+        exit 6
+    }
+
+    Write-Host "Closing Ghostlist because -Force was supplied..." -ForegroundColor Yellow
+    $running | Stop-Process -Force -ErrorAction SilentlyContinue
+    Start-Sleep -Milliseconds 500
+}
+
 if (Test-Path -LiteralPath $shortcutPath) {
     Remove-Item -LiteralPath $shortcutPath -Force
 }
@@ -16,6 +32,7 @@ Remove-Item -LiteralPath '$escapedDirectory' -Recurse -Force -ErrorAction Silent
 Remove-Item -LiteralPath `$PSCommandPath -Force -ErrorAction SilentlyContinue
 "@ | Set-Content -LiteralPath $cleanupScript -Encoding UTF8
 
-Write-Host "Ghostlist was uninstalled. Registry backups were preserved." -ForegroundColor Green
+Write-Host "Ghostlist was uninstalled." -ForegroundColor Green
+Write-Host "Your backups were NOT deleted. They stay in $backupDirectory so anything Ghostlist changed can still be restored. Delete that folder by hand if you no longer want them."
 Start-Process -FilePath "powershell.exe" -WindowStyle Hidden -ArgumentList @("-NoProfile", "-ExecutionPolicy", "Bypass", "-File", $cleanupScript)
-
+exit 0

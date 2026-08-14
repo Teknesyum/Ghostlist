@@ -33,3 +33,35 @@ T1 rename ──▶ T2 dogruluk ──▶ T3 siniflandirma ──▶ T4 artik-sa
 - **İmzalama:** bu turda yok. CI imzasız yayınlar, SHA256 yayımlanır.
 - **Depo:** `github.com/Teknesyum/ProgramFixer` → `Ghostlist` yeniden adlandırması kullanıcıda.
 - Yedek klasörü `%LOCALAPPDATA%\Ghostlist\Backups`; eski `ProgramFixer` klasörü ilk açılışta göç eder.
+
+---
+
+# Tur 2 — yayına hazırlık
+
+Tur 1 bitti: T1-T7 `done/`, 153 test yeşil, son commit `4e3091e` (v2.0.0). Push atılmadı.
+
+Tur 1'in kapanışında açık kalanlar bu turun çıkış noktası: sürüm üç yerde elle tutuluyor,
+kurulum betiği indirdiğini doğrulamıyor, yedekler yalnızca dosya seçiciyle geri yükleniyor,
+tarama iptal edilemiyor, ürünün güncellemeden haberi yok.
+
+```
+T8 surum+paketleme ──┬─▶ T12 guncelleme+winget
+T9 yedek+gecmis ─────┤
+T10 performans+iptal ─┤
+T11 rapor+tani ──────┘
+```
+
+| # | Başlık | Rol | Model | Bağımlı |
+|---|---|---|---|---|
+| T8 | Sürüm tek kaynağa, kurulum bütünlük doğrulaması | usta | sonnet | — |
+| T9 | Yedek yönetimi ve işlem geçmişi ekranı | usta-arayuz | sonnet | — |
+| T10 | Paralel tarama, iptal, kategori ilerlemesi | usta | sonnet | — |
+| T11 | Rapor dışa aktarma + tanılama paketi | usta | sonnet | T10 |
+| T12 | Güncelleme bildirimi + winget manifest + test kapsamı | usta | sonnet | T8 |
+
+## Bu turda yapılmayacaklar
+
+- **Push, tag, release yayını yok.** Depoya çıkan her şey kullanıcının kararı.
+- **Kod imzalama yok** — sertifika yok. SHA256 doğrulaması bunun yerine geçmez, tamamlar.
+- Otomatik güncelleme indirme/kurma yok; ürün yalnızca **haber verir**.
+- Telemetri yok. Tanılama paketi kullanıcının elinde kalır, hiçbir yere gönderilmez.
