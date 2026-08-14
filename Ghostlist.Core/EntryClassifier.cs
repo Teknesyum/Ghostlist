@@ -6,6 +6,11 @@ public interface IFileSystem
     ProbeResult ProbeDirectory(string path);
     IReadOnlyList<string>? TryListEntries(string path);
     DateTimeOffset? TryGetLastWrite(string path);
+    IReadOnlyList<string>? TryListFiles(string path, string pattern, bool recursive);
+    IReadOnlyList<string>? TryListDirectories(string path);
+    string? TryReadText(string path);
+    byte[]? TryReadBytes(string path);
+    bool IsFixedVolume(string path);
 }
 
 public sealed class PhysicalFileSystem : IFileSystem
@@ -56,6 +61,42 @@ public sealed class PhysicalFileSystem : IFileSystem
             return null;
         }
         catch { return null; }
+    }
+
+    public IReadOnlyList<string>? TryListFiles(string path, string pattern, bool recursive)
+    {
+        try { return Directory.GetFiles(path, pattern, recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly); }
+        catch { return null; }
+    }
+
+    public IReadOnlyList<string>? TryListDirectories(string path)
+    {
+        try { return Directory.GetDirectories(path); }
+        catch { return null; }
+    }
+
+    public string? TryReadText(string path)
+    {
+        try { return File.ReadAllText(path); }
+        catch { return null; }
+    }
+
+    public byte[]? TryReadBytes(string path)
+    {
+        try { return File.ReadAllBytes(path); }
+        catch { return null; }
+    }
+
+    public bool IsFixedVolume(string path)
+    {
+        try
+        {
+            if (path.StartsWith(@"\\", StringComparison.Ordinal)) return false;
+            var root = Path.GetPathRoot(path);
+            if (string.IsNullOrEmpty(root)) return false;
+            return new DriveInfo(root).DriveType == DriveType.Fixed;
+        }
+        catch { return false; }
     }
 }
 

@@ -1,5 +1,4 @@
 using Microsoft.Win32;
-using System.Text.Json;
 
 namespace Ghostlist.Core;
 
@@ -31,6 +30,7 @@ public interface IRegistryKeyHandle : IDisposable
     IRegistryKeyHandle? OpenSubKey(string name, bool writable = false);
     IRegistryKeyHandle CreateSubKey(string name);
     void DeleteSubKeyTree(string name);
+    void DeleteValue(string name);
 }
 
 public interface IRegistryHiveAccessor
@@ -76,6 +76,7 @@ internal sealed class WindowsRegistryKeyHandle(RegistryKey key, RegistryKey? own
     public object? GetValue(string name) => key.GetValue(name, null, RegistryValueOptions.DoNotExpandEnvironmentNames);
     public void SetValue(string name, object value, RegistryValueKind kind) => key.SetValue(name, value, kind);
     public void DeleteSubKeyTree(string name) => key.DeleteSubKeyTree(name, throwOnMissingSubKey: true);
+    public void DeleteValue(string name) => key.DeleteValue(name, throwOnMissingValue: true);
 
     public IRegistryKeyHandle? OpenSubKey(string name, bool writable = false)
     {
@@ -153,7 +154,7 @@ public sealed class WindowsUninstallRepository(IRegistryHiveAccessor accessor) :
     private static RegistryKeySnapshot CaptureKey(IRegistryKeyHandle key, string name)
     {
         var values = key.GetValueNames().Select(value => new RegistryValueSnapshot(
-            value, key.GetValueKind(value), NormalizeValue(key.GetValue(value)))).ToList();
+            value, key.GetValueKind(value), RegistryValueCodec.Normalize(key.GetValue(value)))).ToList();
         var children = new List<RegistryKeySnapshot>();
         foreach (var child in key.GetSubKeyNames())
         {
@@ -167,7 +168,7 @@ public sealed class WindowsUninstallRepository(IRegistryHiveAccessor accessor) :
     private static void WriteKey(IRegistryKeyHandle key, IReadOnlyList<RegistryValueSnapshot> values, IReadOnlyList<RegistryKeySnapshot> children)
     {
         foreach (var item in values)
-            key.SetValue(item.Name, DenormalizeValue(item), item.Kind);
+            key.SetValue(item.Name, RegistryValueCodec.Denormalize(item), item.Kind);
         foreach (var child in children)
         {
             using var sub = key.CreateSubKey(child.Name);
@@ -175,18 +176,4 @@ public sealed class WindowsUninstallRepository(IRegistryHiveAccessor accessor) :
         }
     }
 
-    private static object? NormalizeValue(object? value) => value is byte[] bytes ? Convert.ToBase64String(bytes) : value;
-    private static object DenormalizeValue(RegistryValueSnapshot item)
-    {
-        if (item.Value is not JsonElement json)
-            return item.Kind == RegistryValueKind.Binary && item.Value is string text ? Convert.FromBase64String(text) : item.Value ?? string.Empty;
-        return item.Kind switch
-        {
-            RegistryValueKind.DWord => json.GetInt32(),
-            RegistryValueKind.QWord => json.GetInt64(),
-            RegistryValueKind.MultiString => json.EnumerateArray().Select(x => x.GetString() ?? string.Empty).ToArray(),
-            RegistryValueKind.Binary => Convert.FromBase64String(json.GetString() ?? string.Empty),
-            _ => json.GetString() ?? string.Empty
-        };
-    }
 }

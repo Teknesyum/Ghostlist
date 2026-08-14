@@ -156,3 +156,8 @@ public sealed record UninstallEntry(
     RegistryLocation Location);
 
 public sealed record RegistryValueSnapshot(string Name, RegistryValueKind Kind, object? Value);
+
+public sealed record RegistryValueBackup(
+    RegistryLocation Location,
+    RegistryValueSnapshot Value,
+    DateTimeOffset CreatedAt);

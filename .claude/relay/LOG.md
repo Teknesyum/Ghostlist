@@ -9,3 +9,5 @@
 2026-08-14 T2  denetim gecti (sole) - 6/6 kriter koda bakilarak dogrulandi, build 0 uyari, test 44/44
 2026-08-14 T3  done: kanit tabanli siniflandirma (Evidence/Finding/ConfidenceRules), IIssueProvider + CleanupService saglayici listesi, MSI yetim tespiti (PackedGuid), MSIX saglayicisi, uc durumlu IFileSystem; build 0 uyari, test 92/92
 2026-08-14 T3  owns genisletildi: CleanupService.cs (yeni, T2 dosyasindan tasindi), Backup/FileBackupSink.cs (T4 klasoru, iskelet), RegistryRepository.cs (sinif silme), MainWindow.xaml{,.cs} (T5 dosyasi, asgari uyarlama), 3 eski test dosyasi
+2026-08-14 T4  done: kisayol/baslangic/gorev/artik-klasor saglayicilari, COM-suz ShellLinkReader, IBackupSink deger+klasor yedegi, IFileSystem 5 yeni uye, DeleteValue; build 0 uyari, test 132/132
+2026-08-14 T4  owns genisletildi: EntryClassifier.cs + IIssueProvider.cs + Models.cs + CleanupService.cs (T3), RegistryRepository.cs + InMemoryRegistryHiveAccessor.cs (T2, DeleteValue), Providers/EnvironmentPaths.cs + ShellLinkReader.cs (yeni yardimci)

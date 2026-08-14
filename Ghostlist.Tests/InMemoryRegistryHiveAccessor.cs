@@ -62,4 +62,9 @@ public sealed class InMemoryRegistryKey(string name) : IRegistryKeyHandle
     {
         if (!Children.Remove(name)) throw new ArgumentException($"Alt anahtar yok: {name}");
     }
+
+    public void DeleteValue(string name)
+    {
+        if (!values.Remove(name)) throw new ArgumentException($"Deger yok: {name}");
+    }
 }

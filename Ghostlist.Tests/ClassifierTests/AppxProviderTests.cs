@@ -121,7 +121,9 @@ public class AppxProviderTests
     {
         public bool Used { get; private set; }
         public string SaveRegistryTree(RegistryTreeBackup backup, string label) { Used = true; return string.Empty; }
+        public string SaveRegistryValue(RegistryValueBackup backup, string label) { Used = true; return string.Empty; }
         public string MoveFileToBackup(string sourcePath, string label) { Used = true; return string.Empty; }
+        public string MoveDirectoryToBackup(string sourcePath, string label) { Used = true; return string.Empty; }
         public string SaveText(string content, string label, string extension) { Used = true; return string.Empty; }
         public void Restore(string backupPath) => Used = true;
         public IReadOnlyList<string> List() => [];

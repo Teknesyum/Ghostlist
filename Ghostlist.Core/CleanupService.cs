@@ -33,10 +33,18 @@ public sealed class CleanupService(IReadOnlyList<IIssueProvider> providers, IBac
     {
         var accessor = new WindowsRegistryHiveAccessor();
         var fileSystem = new PhysicalFileSystem();
+        var paths = new WindowsEnvironmentPaths();
         var repository = new WindowsUninstallRepository(accessor);
         var classifier = new EntryClassifier(fileSystem, new RegistryMsiCatalog(accessor, fileSystem));
         return new CleanupService(
-            [new UninstallEntryProvider(repository, classifier), new AppxProvider(new RegistryAppxCatalog(accessor), fileSystem)],
-            new FileBackupSink(backupDirectory, repository));
+            [
+                new UninstallEntryProvider(repository, classifier),
+                new ShortcutProvider(paths, fileSystem),
+                new StartupProvider(accessor, paths, fileSystem),
+                new ScheduledTaskProvider(paths, fileSystem, new SchtasksRemover()),
+                new LeftoverFolderProvider(paths, fileSystem, repository),
+                new AppxProvider(new RegistryAppxCatalog(accessor), fileSystem)
+            ],
+            new FileBackupSink(backupDirectory, repository, accessor));
     }
 }
