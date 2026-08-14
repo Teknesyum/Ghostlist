@@ -265,6 +265,8 @@
                             <Button Content="{local:Loc btn.rescan}" Command="{Binding ScanCommand}"/>
                             <Button Content="{local:Loc btn.stopScan}" Command="{Binding StopScanCommand}"
                                     Visibility="{Binding Progress.IsRunning, Converter={StaticResource BoolToVis}}"/>
+                            <Button Content="{local:Loc btn.export}" ToolTip="{local:Loc btn.exportTip}" Command="{Binding ExportReportCommand}"/>
+                            <Button Content="{local:Loc btn.diagnostics}" ToolTip="{local:Loc btn.diagnosticsTip}" Command="{Binding ExportDiagnosticsCommand}"/>
                             <Button Content="{local:Loc btn.restore}" Command="{Binding RestoreCommand}"/>
                             <Button Style="{StaticResource PrimaryButton}" Content="{local:Loc btn.fixSelected}" Command="{Binding FixSelectedCommand}"/>
                             <Button Style="{StaticResource DangerButton}" Content="{local:Loc btn.fixAll}" Command="{Binding FixAllCommand}"/>

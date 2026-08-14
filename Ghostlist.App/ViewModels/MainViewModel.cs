@@ -20,7 +20,11 @@ public sealed class MainViewModel : ObservableObject
     private readonly List<FindingViewModel> all = [];
     private readonly Dictionary<string, CategoryGroupViewModel> groups = [];
 
+    private readonly List<string> errors = [];
+
     private CancellationTokenSource? scan;
+    private TimeSpan scanDuration;
+    private IReadOnlyList<ScanFailure> scanFailures = [];
     private bool isBusy;
     private bool brokenOnly;
     private bool showBackups;
@@ -44,8 +48,13 @@ public sealed class MainViewModel : ObservableObject
         var version = Assembly.GetExecutingAssembly().GetName().Version;
         VersionNumber = $"{version?.Major ?? 1}.{version?.Minor ?? 0}.{version?.Build ?? 0}";
 
+        Export = new ExportCommands(service, () => all.Select(x => x.Model).ToList(), Diagnostics, ShowDialogAsync,
+            message => StatusMessage = message);
+
         ScanCommand = new RelayCommand(async () => await ScanAsync(), () => !IsBusy);
         StopScanCommand = new RelayCommand(StopScan, () => Progress.IsRunning);
+        ExportReportCommand = new RelayCommand(async () => await Guarded(Export.ExportReportAsync), () => !IsBusy);
+        ExportDiagnosticsCommand = new RelayCommand(async () => await Guarded(Export.ExportDiagnosticsAsync), () => !IsBusy);
         SelectAllCommand = new RelayCommand(SelectAll, () => !IsBusy);
         ClearSelectionCommand = new RelayCommand(ClearSelection, () => !IsBusy);
         FixSelectedCommand = new RelayCommand(async () => await FixSelectedAsync(), () => !IsBusy);
@@ -69,6 +78,8 @@ public sealed class MainViewModel : ObservableObject
 
     public RelayCommand ScanCommand { get; }
     public RelayCommand StopScanCommand { get; }
+    public RelayCommand ExportReportCommand { get; }
+    public RelayCommand ExportDiagnosticsCommand { get; }
     public RelayCommand SelectAllCommand { get; }
     public RelayCommand ClearSelectionCommand { get; }
     public RelayCommand FixSelectedCommand { get; }
@@ -83,6 +94,8 @@ public sealed class MainViewModel : ObservableObject
     public BackupsViewModel Backups { get; }
 
     public ScanProgressViewModel Progress { get; } = new();
+
+    public ExportCommands Export { get; }
 
     public bool ShowBackups
     {
@@ -128,7 +141,7 @@ public sealed class MainViewModel : ObservableObject
         {
             if (!Set(ref isBusy, value)) return;
             Raise(nameof(IsIdle));
-            foreach (var command in new[] { ScanCommand, SelectAllCommand, ClearSelectionCommand, FixSelectedCommand, FixAllCommand, RestoreCommand, InfoCommand })
+            foreach (var command in new[] { ScanCommand, SelectAllCommand, ClearSelectionCommand, FixSelectedCommand, FixAllCommand, RestoreCommand, InfoCommand, ExportReportCommand, ExportDiagnosticsCommand })
                 command.RaiseCanExecuteChanged();
         }
     }
@@ -205,7 +218,11 @@ public sealed class MainViewModel : ObservableObject
             all.Clear();
             Selected = null;
             Regroup();
+            var clock = System.Diagnostics.Stopwatch.StartNew();
             var outcome = await service.ScanAsync(reporter, null, scan.Token);
+            clock.Stop();
+            scanDuration = clock.Elapsed;
+            scanFailures = outcome.Failures;
             foreach (var item in outcome.Findings)
                 all.Add(new FindingViewModel(item, groups[service.CategoryOf(item)]));
             Regroup();
@@ -398,8 +415,32 @@ public sealed class MainViewModel : ObservableObject
         _ = ShowDialogAsync(Strings.Current.Get("dialog.error.title"), Strings.Current.Get("admin.restartFailed"), null, false);
     }
 
-    private Task ShowErrorAsync(Exception ex) =>
-        ShowDialogAsync(Strings.Current.Get("dialog.error.title"), ex.Message, null, false);
+    private Task ShowErrorAsync(Exception ex)
+    {
+        errors.Add(ex.ToString());
+        if (errors.Count > DiagnosticsBundle.HistoryLineLimit) errors.RemoveAt(0);
+        return ShowDialogAsync(Strings.Current.Get("dialog.error.title"), ex.Message, null, false);
+    }
+
+    private DiagnosticsInput Diagnostics() =>
+        new(all.Select(x => x.Model).ToList(),
+            all.GroupBy(x => x.Category).ToDictionary(x => x.Key, x => x.Count()),
+            scanFailures,
+            scanDuration,
+            errors.ToList());
+
+    private async Task Guarded(Func<Task> action)
+    {
+        IsBusy = true;
+        try { await action(); }
+        catch (Exception ex)
+        {
+            IsBusy = false;
+            await ShowErrorAsync(ex);
+            return;
+        }
+        finally { IsBusy = false; }
+    }
 
     private async Task<bool> ShowDialogAsync(string title, string body, IReadOnlyList<string>? lines, bool askConfirmation)
     {

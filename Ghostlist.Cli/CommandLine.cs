@@ -15,6 +15,7 @@ public sealed record CliPlan(
     bool Yes = false,
     bool ListBackups = false,
     string? BackupPath = null,
+    string? ExportPath = null,
     string? Error = null)
 {
     public static CliPlan Invalid(string error) => new(CommandKind.Invalid, Error: error);
@@ -61,6 +62,12 @@ public static class CommandLine
                 case "--min-confidence":
                     if (!TryConfidence(args, ref index, out var minimum, out var error)) return CliPlan.Invalid(error);
                     plan = plan with { MinConfidence = minimum };
+                    break;
+                case "--export":
+                    if (!TryValue(args, ref index, out var exportPath)) return CliPlan.Invalid("--export needs a value");
+                    if (Path.GetExtension(exportPath).Length == 0)
+                        return CliPlan.Invalid("--export needs a path ending in .csv or .json");
+                    plan = plan with { ExportPath = exportPath };
                     break;
                 default:
                     return CliPlan.Invalid($"unknown option '{args[index]}'");

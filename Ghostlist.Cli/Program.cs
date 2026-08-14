@@ -75,6 +75,11 @@ public static class Program
     {
         var findings = Reportable(service, reporter, plan, token);
         foreach (var finding in findings) reporter.Finding(finding, service.CategoryOf(finding));
+        if (plan.ExportPath is not null)
+        {
+            ScanReport.Write(plan.ExportPath, ScanReport.Rows(service, findings));
+            reporter.Note($"exported {findings.Count} findings to {plan.ExportPath}");
+        }
         reporter.Note($"{findings.Count} findings, {findings.Count(x => x.Status == EntryStatus.Broken)} broken");
         return findings.Count == 0 ? ExitClean : ExitFindings;
     }
@@ -151,7 +156,7 @@ public static class Program
     {
         output.WriteLine("ghostlist - find and fix the records Windows leaves behind after an uninstall");
         output.WriteLine();
-        output.WriteLine("  ghostlist scan [--category <name>] [--json] [--min-confidence <n>]");
+        output.WriteLine("  ghostlist scan [--category <name>] [--json] [--min-confidence <n>] [--export <file.csv|file.json>]");
         output.WriteLine("  ghostlist fix --id <finding-id> [--dry-run] [--json]");
         output.WriteLine($"  ghostlist fix --all [--min-confidence {CommandLine.DefaultFixConfidence}] [--dry-run] [--yes] [--json]");
         output.WriteLine("  ghostlist restore --list [--json]");
