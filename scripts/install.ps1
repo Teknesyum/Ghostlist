@@ -7,6 +7,7 @@ param(
 $ErrorActionPreference = "Stop"
 $ProgressPreference = "SilentlyContinue"
 $releaseUrl = "https://github.com/Teknesyum/Ghostlist/releases/latest/download/Ghostlist-win-x64.zip"
+$uninstallUrl = "https://raw.githubusercontent.com/Teknesyum/Ghostlist/main/scripts/uninstall.ps1"
 $tempDirectory = Join-Path ([System.IO.Path]::GetTempPath()) ("Ghostlist-" + [Guid]::NewGuid().ToString("N"))
 $archivePath = Join-Path $tempDirectory "Ghostlist-win-x64.zip"
 $extractPath = Join-Path $tempDirectory "extracted"
@@ -26,6 +27,11 @@ try {
         throw "The release archive does not contain Ghostlist.exe."
     }
 
+    $uninstallScript = Join-Path $InstallDirectory "uninstall.ps1"
+    if (-not (Test-Path -LiteralPath $uninstallScript)) {
+        Invoke-WebRequest -UseBasicParsing -Uri $uninstallUrl -OutFile $uninstallScript
+    }
+
     if (-not $NoShortcut) {
         $desktop = [Environment]::GetFolderPath([Environment+SpecialFolder]::Desktop)
         $shortcutPath = Join-Path $desktop "Ghostlist.lnk"
@@ -40,6 +46,7 @@ try {
 
     Write-Host "Ghostlist was installed successfully." -ForegroundColor Green
     Write-Host "Location: $InstallDirectory"
+    Write-Host "Command line: $(Join-Path $InstallDirectory 'cli\ghostlist.exe')"
     if (-not $NoLaunch) {
         Start-Process -FilePath $executable -WorkingDirectory $InstallDirectory
     }

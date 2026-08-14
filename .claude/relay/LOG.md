@@ -14,3 +14,5 @@
 2026-08-14 T5  done: Localization tabanli TR/EN gecisi (115 anahtar, anlik, settings.json), MVVM ayrimi, gruplu sanallastirilmis liste + sayi rozeti, kanit paneli, yonetici rozeti/kilitli HKLM satirlari, MessageBox yerine uygulama ici diyalog; build 0 uyari, test 132/132
 2026-08-14 T6  done: Ghostlist.Cli (scan/fix/restore, --json JSONL, --dry-run, cikis 0/1/2, --all icin --yes), SystemRestore.TryCreate (sessiz false), ci.yml + release.yml (self-contained tek dosya, SHA256, imzasiz); build 0 uyari, test 153/153
 2026-08-14 T6  owns genisletildi: Ghostlist.Tests.csproj (CLI proje basvurusu), ViewModels/MainViewModel.cs (T5, toplu duzeltme oncesi geri yukleme noktasi), .gitignore (publish/ + release zip)
+2026-08-15 T7  owns genisletildi: assets/ (Ingilizce arayuz ekran goruntusu), Ghostlist.App.csproj + Ghostlist.Cli.csproj (kriter 7 icin v2.0.0 surum numarasi)
+2026-08-15 T7  done: README Ingilizce yeniden yazildi (guvenlik modeli + CLI + v2.0.0), docs/GUVENLIK.md eklendi, install.ps1 uninstall.ps1i de kuruyor, dort yonlendirici CLAUDE.md (<=20 satir), surum v2.0.0; build 0 uyari, test 153/153
