@@ -7,15 +7,17 @@ public sealed class ShortcutProvider(IEnvironmentPaths paths, IFileSystem fileSy
     public string Id => Categories.Shortcut;
     public string Category => Categories.Shortcut;
 
-    public IReadOnlyList<Finding> Scan()
+    public IReadOnlyList<Finding> Scan(CancellationToken token = default)
     {
         var findings = new List<Finding>();
         foreach (var directory in paths.ShortcutDirectories.Distinct(StringComparer.OrdinalIgnoreCase))
         {
+            token.ThrowIfCancellationRequested();
             var files = fileSystem.TryListFiles(directory, "*.lnk", recursive: true);
             if (files is null) continue;
             foreach (var file in files)
             {
+                token.ThrowIfCancellationRequested();
                 var finding = Inspect(file);
                 if (finding is not null) findings.Add(finding);
             }

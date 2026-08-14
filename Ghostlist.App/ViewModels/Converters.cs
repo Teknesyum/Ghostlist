@@ -5,6 +5,15 @@ using System.Windows.Media;
 
 namespace Ghostlist.App;
 
+public sealed class AnyTrueToVisibilityConverter : IMultiValueConverter
+{
+    public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture) =>
+        values.Any(x => x is true) ? Visibility.Visible : Visibility.Collapsed;
+
+    public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) =>
+        throw new NotSupportedException();
+}
+
 public sealed class InverseBoolConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture) => value is not true;

@@ -16,16 +16,18 @@ public sealed class LeftoverFolderProvider(
     public string Id => Categories.Folder;
     public string Category => Categories.Folder;
 
-    public IReadOnlyList<Finding> Scan()
+    public IReadOnlyList<Finding> Scan(CancellationToken token = default)
     {
         var owned = OwnedDirectories();
         var findings = new List<Finding>();
         foreach (var root in paths.ProgramDirectories.Distinct(StringComparer.OrdinalIgnoreCase))
         {
+            token.ThrowIfCancellationRequested();
             var directories = fileSystem.TryListDirectories(root);
             if (directories is null) continue;
             foreach (var directory in directories)
             {
+                token.ThrowIfCancellationRequested();
                 var finding = Inspect(directory, owned);
                 if (finding is not null) findings.Add(finding);
             }

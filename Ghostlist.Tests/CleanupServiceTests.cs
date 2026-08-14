@@ -13,7 +13,7 @@ public class CleanupServiceTests : IDisposable
     {
         var repository = new FakeRepository();
         var service = Create(repository);
-        var finding = service.Scan().Single();
+        var finding = service.Scan().Findings.Single();
 
         Assert.Equal(EntryStatus.Broken, finding.Status);
         var result = service.Fix(finding);
@@ -30,7 +30,7 @@ public class CleanupServiceTests : IDisposable
     {
         var repository = new FakeRepository();
         var service = Create(repository);
-        var finding = service.Scan().Single() with { Status = EntryStatus.Suspicious };
+        var finding = service.Scan().Findings.Single() with { Status = EntryStatus.Suspicious };
 
         var result = service.Fix(finding);
 
@@ -58,7 +58,7 @@ public class CleanupServiceTests : IDisposable
             [new UninstallEntryProvider(repository, Classifier()), new AppxProvider(new EmptyAppxCatalog(), new FakeFileSystem())],
             new FileBackupSink(directory, repository));
 
-        var findings = service.Scan();
+        var findings = service.Scan().Findings;
 
         Assert.Equal(2, service.Providers.Count);
         Assert.Equal(Categories.Uninstall, service.CategoryOf(findings.Single()));
@@ -69,7 +69,7 @@ public class CleanupServiceTests : IDisposable
     {
         var repository = new FakeRepository();
         var service = Create(repository);
-        var finding = service.Scan().Single();
+        var finding = service.Scan().Findings.Single();
 
         Assert.True(service.IsAutoFixable(finding));
         Assert.Empty(service.AutoFixable([finding with { Confidence = ConfidenceRules.AutoFixThreshold - 1 }]));

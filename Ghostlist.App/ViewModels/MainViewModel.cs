@@ -20,6 +20,7 @@ public sealed class MainViewModel : ObservableObject
     private readonly List<FindingViewModel> all = [];
     private readonly Dictionary<string, CategoryGroupViewModel> groups = [];
 
+    private CancellationTokenSource? scan;
     private bool isBusy;
     private bool brokenOnly;
     private bool showBackups;
@@ -44,6 +45,7 @@ public sealed class MainViewModel : ObservableObject
         VersionNumber = $"{version?.Major ?? 1}.{version?.Minor ?? 0}.{version?.Build ?? 0}";
 
         ScanCommand = new RelayCommand(async () => await ScanAsync(), () => !IsBusy);
+        StopScanCommand = new RelayCommand(StopScan, () => Progress.IsRunning);
         SelectAllCommand = new RelayCommand(SelectAll, () => !IsBusy);
         ClearSelectionCommand = new RelayCommand(ClearSelection, () => !IsBusy);
         FixSelectedCommand = new RelayCommand(async () => await FixSelectedAsync(), () => !IsBusy);
@@ -66,6 +68,7 @@ public sealed class MainViewModel : ObservableObject
     public ICollectionView FindingsView { get; }
 
     public RelayCommand ScanCommand { get; }
+    public RelayCommand StopScanCommand { get; }
     public RelayCommand SelectAllCommand { get; }
     public RelayCommand ClearSelectionCommand { get; }
     public RelayCommand FixSelectedCommand { get; }
@@ -78,6 +81,8 @@ public sealed class MainViewModel : ObservableObject
     public RelayCommand ShowBackupsCommand { get; }
 
     public BackupsViewModel Backups { get; }
+
+    public ScanProgressViewModel Progress { get; } = new();
 
     public bool ShowBackups
     {
@@ -168,6 +173,7 @@ public sealed class MainViewModel : ObservableObject
     {
         StatusMessage = Strings.Current.Get("status.ready");
         foreach (var group in groups.Values) group.RefreshLanguage();
+        Progress.RefreshLanguage();
         foreach (var item in all) item.RefreshLanguage();
         Raise(nameof(VersionText));
         Raise(nameof(AdminText));
@@ -176,28 +182,58 @@ public sealed class MainViewModel : ObservableObject
         Raise(nameof(IsEnglish));
     }
 
+    private void StopScan() => scan?.Cancel();
+
     private async Task ScanAsync()
     {
         IsBusy = true;
+        scan = new CancellationTokenSource();
+        Progress.Begin(service.Providers.Select(x => x.Category));
+        StopScanCommand.RaiseCanExecuteChanged();
+        var reporter = new Progress<ScanProgress>(report =>
+        {
+            Progress.Report(report);
+            StatusMessage = report.StateKey == ScanStates.Failed
+                ? Strings.Current.Format("status.scanCategoryFailed",
+                    ("category", Strings.Current.Get($"category.{report.Category}")))
+                : Strings.Current.Format("status.scanning",
+                    ("category", Strings.Current.Get($"category.{report.Category}")));
+        });
+
         try
         {
             all.Clear();
             Selected = null;
-            foreach (var provider in service.Providers)
-            {
-                StatusMessage = Strings.Current.Format("status.scanning",
-                    ("category", Strings.Current.Get($"category.{provider.Category}")));
-                var found = await Task.Run(provider.Scan);
-                var group = groups[provider.Category];
-                foreach (var item in found) all.Add(new FindingViewModel(item, group));
-                Regroup();
-            }
-            StatusMessage = Strings.Current.Format("status.scanDone",
-                ("total", all.Count),
-                ("broken", all.Count(x => x.Model.Status == EntryStatus.Broken)));
+            Regroup();
+            var outcome = await service.ScanAsync(reporter, null, scan.Token);
+            foreach (var item in outcome.Findings)
+                all.Add(new FindingViewModel(item, groups[service.CategoryOf(item)]));
+            Regroup();
+            StatusMessage = outcome.HasFailures
+                ? Strings.Current.Format("status.scanDoneWithErrors",
+                    ("total", all.Count),
+                    ("broken", all.Count(x => x.Model.Status == EntryStatus.Broken)),
+                    ("failed", outcome.Failures.Count))
+                : Strings.Current.Format("status.scanDone",
+                    ("total", all.Count),
+                    ("broken", all.Count(x => x.Model.Status == EntryStatus.Broken)));
+        }
+        catch (OperationCanceledException)
+        {
+            all.Clear();
+            Selected = null;
+            Regroup();
+            StatusMessage = Strings.Current.Get("status.scanCancelled");
         }
         catch (Exception ex) { await ShowErrorAsync(ex); }
-        finally { IsBusy = false; }
+        finally
+        {
+            Progress.End();
+            scan.Dispose();
+            scan = null;
+            StopScanCommand.RaiseCanExecuteChanged();
+            IsBusy = false;
+        }
     }
 
     private void Regroup()

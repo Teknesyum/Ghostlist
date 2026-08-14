@@ -4,11 +4,72 @@ public sealed class CleanupService(IReadOnlyList<IIssueProvider> providers, IBac
 {
     public IReadOnlyList<IIssueProvider> Providers => providers;
 
-    public IReadOnlyList<Finding> Scan()
+    public ScanOutcome Scan(CancellationToken token = default) =>
+        ScanAsync(null, null, token).GetAwaiter().GetResult();
+
+    public async Task<ScanOutcome> ScanAsync(
+        IProgress<ScanProgress>? progress = null,
+        ScanOptions? options = null,
+        CancellationToken token = default)
     {
+        var total = providers.Count;
+        if (total == 0) return ScanOutcome.Empty;
+
+        var results = new IReadOnlyList<Finding>?[total];
+        var failures = new ScanFailure?[total];
+        var completed = 0;
+        using var gate = new SemaphoreSlim((options ?? ScanOptions.Default).MaxConcurrency);
+
+        var tasks = new Task[total];
+        for (var i = 0; i < total; i++)
+        {
+            var index = i;
+            var provider = providers[index];
+            tasks[index] = Task.Run(async () =>
+            {
+                await gate.WaitAsync(token).ConfigureAwait(false);
+                try
+                {
+                    token.ThrowIfCancellationRequested();
+                    progress?.Report(new ScanProgress(
+                        provider.Id, provider.Category, ScanStates.Running, Volatile.Read(ref completed), total, null));
+                    results[index] = provider.Scan(token);
+                    progress?.Report(new ScanProgress(
+                        provider.Id, provider.Category, ScanStates.Completed, Interlocked.Increment(ref completed), total, null));
+                }
+                catch (OperationCanceledException) when (token.IsCancellationRequested)
+                {
+                    throw;
+                }
+                catch (Exception ex)
+                {
+                    failures[index] = new ScanFailure(provider.Id, provider.Category, ex.Message);
+                    progress?.Report(new ScanProgress(
+                        provider.Id, provider.Category, ScanStates.Failed, Interlocked.Increment(ref completed), total, ex.Message));
+                }
+                finally
+                {
+                    gate.Release();
+                }
+            }, token);
+        }
+
+        try
+        {
+            await Task.WhenAll(tasks).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException)
+        {
+            token.ThrowIfCancellationRequested();
+            throw;
+        }
+        token.ThrowIfCancellationRequested();
+
         var findings = new List<Finding>();
-        foreach (var provider in providers) findings.AddRange(provider.Scan());
-        return findings;
+        for (var i = 0; i < total; i++)
+            if (results[i] is { } result)
+                findings.AddRange(result);
+        return new ScanOutcome(findings, failures.OfType<ScanFailure>().ToList());
     }
 
     public string CategoryOf(Finding finding) =>

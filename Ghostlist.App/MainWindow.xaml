@@ -251,7 +251,7 @@
 
                 <Grid Grid.Row="2" Visibility="{Binding ShowFindings, Converter={StaticResource BoolToVis}}">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/><RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/><RowDefinition Height="240"/>
                 </Grid.RowDefinitions>
 
@@ -263,6 +263,8 @@
                             <Button Content="{local:Loc btn.selectAll}" Command="{Binding SelectAllCommand}"/>
                             <Button Content="{local:Loc btn.clearSelection}" Command="{Binding ClearSelectionCommand}"/>
                             <Button Content="{local:Loc btn.rescan}" Command="{Binding ScanCommand}"/>
+                            <Button Content="{local:Loc btn.stopScan}" Command="{Binding StopScanCommand}"
+                                    Visibility="{Binding Progress.IsRunning, Converter={StaticResource BoolToVis}}"/>
                             <Button Content="{local:Loc btn.restore}" Command="{Binding RestoreCommand}"/>
                             <Button Style="{StaticResource PrimaryButton}" Content="{local:Loc btn.fixSelected}" Command="{Binding FixSelectedCommand}"/>
                             <Button Style="{StaticResource DangerButton}" Content="{local:Loc btn.fixAll}" Command="{Binding FixAllCommand}"/>
@@ -270,7 +272,57 @@
                     </DockPanel>
                 </Border>
 
-                <Grid Grid.Row="1" Margin="12,0,12,6">
+                <Border Grid.Row="1" Style="{StaticResource PanelBorder}" Padding="10,8" Margin="0,0,0,10" CornerRadius="12"
+                        BorderBrush="#5000F3FF">
+                    <Border.Visibility>
+                        <MultiBinding Converter="{StaticResource AnyTrueToVis}">
+                            <Binding Path="Progress.IsRunning"/>
+                            <Binding Path="Progress.HasFailures"/>
+                        </MultiBinding>
+                    </Border.Visibility>
+                    <DockPanel>
+                        <TextBlock DockPanel.Dock="Left" Style="{StaticResource Label}" VerticalAlignment="Center"
+                                   Margin="2,0,12,0" Text="{local:Loc scan.progress}"/>
+                        <TextBlock DockPanel.Dock="Right" Style="{StaticResource MonoValue}" VerticalAlignment="Center"
+                                   Margin="12,0,2,0" Foreground="{StaticResource NeonBlue}" Text="{Binding Progress.CountText}"/>
+                        <ItemsControl ItemsSource="{Binding Progress.Categories}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate><WrapPanel Orientation="Horizontal"/></ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Margin="0,2,8,2" Padding="8,3" CornerRadius="6" Background="#14FFFFFF"
+                                            BorderThickness="1" BorderBrush="#20FFFFFF" ToolTip="{Binding Error}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock FontSize="13" Foreground="{StaticResource TextBody}" Text="{Binding Header}"/>
+                                            <TextBlock FontSize="10" Margin="8,0,0,0" VerticalAlignment="Center"
+                                                       Foreground="{StaticResource TextLabel}" Text="{Binding StateText}"/>
+                                        </StackPanel>
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsRunning}" Value="True">
+                                                        <Setter Property="BorderBrush" Value="#5000F3FF"/>
+                                                        <Setter Property="Background" Value="#1A00F3FF"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding IsDone}" Value="True">
+                                                        <Setter Property="BorderBrush" Value="#5034D399"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding IsFailed}" Value="True">
+                                                        <Setter Property="BorderBrush" Value="#50FF00EA"/>
+                                                        <Setter Property="Background" Value="#1AFF00EA"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </DockPanel>
+                </Border>
+
+                <Grid Grid.Row="2" Margin="12,0,12,6">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="58"/><ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="330"/><ColumnDefinition Width="110"/><ColumnDefinition Width="150"/>
@@ -282,7 +334,7 @@
                     <TextBlock Grid.Column="4" Style="{StaticResource Label}" HorizontalAlignment="Center" Text="{local:Loc column.status}"/>
                 </Grid>
 
-                <ListBox Grid.Row="2" Background="Transparent" BorderThickness="0" Padding="0" Foreground="{StaticResource TextBody}"
+                <ListBox Grid.Row="3" Background="Transparent" BorderThickness="0" Padding="0" Foreground="{StaticResource TextBody}"
                          ItemsSource="{Binding FindingsView}" ItemTemplate="{StaticResource FindingRow}"
                          ItemContainerStyle="{StaticResource FindingItem}"
                          SelectedItem="{Binding Selected, Mode=TwoWay}"
@@ -294,7 +346,7 @@
                     </ListBox.GroupStyle>
                 </ListBox>
 
-                <Border Grid.Row="3" Style="{StaticResource PanelBorder}" Margin="0,12,0,0" BorderBrush="#50B026FF">
+                <Border Grid.Row="4" Style="{StaticResource PanelBorder}" Margin="0,12,0,0" BorderBrush="#50B026FF">
                     <Grid>
                         <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
                         <StackPanel Visibility="{Binding HasSelection, Converter={StaticResource BoolToVis}}">

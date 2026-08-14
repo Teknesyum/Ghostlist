@@ -5,11 +5,12 @@ public sealed class AppxProvider(IAppxCatalog catalog, IFileSystem fileSystem) :
     public string Id => Categories.Msix;
     public string Category => Categories.Msix;
 
-    public IReadOnlyList<Finding> Scan()
+    public IReadOnlyList<Finding> Scan(CancellationToken token = default)
     {
         var findings = new List<Finding>();
         foreach (var package in catalog.GetStagedPackages())
         {
+            token.ThrowIfCancellationRequested();
             if (package.InstallLocation is null) continue;
             var evidence = Assess(package.InstallLocation);
             if (evidence.Count == 0) continue;

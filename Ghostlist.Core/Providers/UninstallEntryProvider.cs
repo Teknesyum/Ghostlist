@@ -5,11 +5,12 @@ public sealed class UninstallEntryProvider(IUninstallRepository repository, Entr
     public string Id => Categories.Uninstall;
     public string Category => Categories.Uninstall;
 
-    public IReadOnlyList<Finding> Scan()
+    public IReadOnlyList<Finding> Scan(CancellationToken token = default)
     {
         var findings = new List<Finding>();
         foreach (var entry in repository.Scan())
         {
+            token.ThrowIfCancellationRequested();
             var assessment = classifier.Classify(entry);
             findings.Add(new Finding(
                 entry.Id, entry.DisplayName, Subtitle(entry, assessment),

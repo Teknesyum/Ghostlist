@@ -15,6 +15,6 @@ public interface IIssueProvider
 {
     string Id { get; }
     string Category { get; }
-    IReadOnlyList<Finding> Scan();
+    IReadOnlyList<Finding> Scan(CancellationToken token = default);
     FixResult Fix(Finding finding, IBackupSink backup);
 }

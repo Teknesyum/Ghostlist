@@ -28,6 +28,7 @@
         <BooleanToVisibilityConverter x:Key="BoolToVis"/>
         <local:InverseBoolConverter x:Key="InverseBool"/>
         <local:InverseBoolToVisibilityConverter x:Key="InverseBoolToVis"/>
+        <local:AnyTrueToVisibilityConverter x:Key="AnyTrueToVis"/>
         <local:ActiveBrushConverter x:Key="ActiveLanguageBrush" Active="#FF00F3FF" Passive="#FF4B5563"/>
         <local:ActiveBrushConverter x:Key="ActiveLanguageBorder" Active="#5000F3FF" Passive="#00000000"/>
 

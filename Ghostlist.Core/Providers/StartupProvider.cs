@@ -22,11 +22,11 @@ public sealed class StartupProvider(
     public string Id => Categories.Startup;
     public string Category => Categories.Startup;
 
-    public IReadOnlyList<Finding> Scan()
+    public IReadOnlyList<Finding> Scan(CancellationToken token = default)
     {
         var findings = new List<Finding>();
-        findings.AddRange(ScanRegistry());
-        findings.AddRange(ScanFolders());
+        findings.AddRange(ScanRegistry(token));
+        findings.AddRange(ScanFolders(token));
         return findings;
     }
 
@@ -52,13 +52,14 @@ public sealed class StartupProvider(
         }
     }
 
-    private List<Finding> ScanRegistry()
+    private List<Finding> ScanRegistry(CancellationToken token)
     {
         var findings = new List<Finding>();
         foreach (var hive in new[] { RegistryHive.CurrentUser, RegistryHive.LocalMachine })
         foreach (var view in new[] { RegistryView.Registry64, RegistryView.Registry32 })
         foreach (var runKey in RunKeys)
         {
+            token.ThrowIfCancellationRequested();
             IRegistryKeyHandle? key;
             try { key = accessor.OpenKey(hive, view, runKey); }
             catch { continue; }
@@ -68,6 +69,7 @@ public sealed class StartupProvider(
                 var location = new RegistryLocation(hive, view, runKey);
                 foreach (var name in key.GetValueNames())
                 {
+                    token.ThrowIfCancellationRequested();
                     if (key.GetValue(name) is not string command) continue;
                     var target = UninstallCommandParser.ResolveExecutable(command, view);
                     if (target is null) continue;
@@ -83,15 +85,17 @@ public sealed class StartupProvider(
         return findings;
     }
 
-    private List<Finding> ScanFolders()
+    private List<Finding> ScanFolders(CancellationToken token)
     {
         var findings = new List<Finding>();
         foreach (var directory in paths.StartupDirectories.Distinct(StringComparer.OrdinalIgnoreCase))
         {
+            token.ThrowIfCancellationRequested();
             var files = fileSystem.TryListFiles(directory, "*.lnk", recursive: false);
             if (files is null) continue;
             foreach (var file in files)
             {
+                token.ThrowIfCancellationRequested();
                 var link = ShellLinkReader.Read(fileSystem.TryReadBytes(file));
                 if (link?.LocalPath is null || link.IsNetworkTarget) continue;
                 if (!fileSystem.IsFixedVolume(link.LocalPath)) continue;

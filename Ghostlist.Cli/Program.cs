@@ -23,17 +23,29 @@ public static class Program
             return ExitClean;
         }
 
+        using var cancellation = new CancellationTokenSource();
+        Console.CancelKeyPress += (_, e) =>
+        {
+            e.Cancel = true;
+            cancellation.Cancel();
+        };
+
         try
         {
             var service = CleanupService.CreateDefault(BackupPaths.BackupDirectory);
             var reporter = new Reporter(Console.Out, plan.Json);
             return plan.Kind switch
             {
-                CommandKind.Scan => RunScan(service, reporter, plan),
-                CommandKind.Fix => RunFix(service, reporter, plan),
+                CommandKind.Scan => RunScan(service, reporter, plan, cancellation.Token),
+                CommandKind.Fix => RunFix(service, reporter, plan, cancellation.Token),
                 CommandKind.Restore => RunRestore(service, reporter, plan),
                 _ => ExitError
             };
+        }
+        catch (OperationCanceledException)
+        {
+            Console.Error.WriteLine("ghostlist: cancelled, nothing was changed");
+            return ExitError;
         }
         catch (Exception ex)
         {
@@ -42,27 +54,37 @@ public static class Program
         }
     }
 
-    private static IReadOnlyList<Finding> Reportable(CleanupService service, CliPlan plan) =>
-        service.Scan()
+    private static IReadOnlyList<Finding> Reportable(
+        CleanupService service, Reporter reporter, CliPlan plan, CancellationToken token) =>
+        Scanned(service, reporter, token)
             .Where(x => x.Status is EntryStatus.Broken or EntryStatus.Suspicious)
             .Where(x => x.Confidence >= plan.MinConfidence)
             .Where(x => plan.Category is null || service.CategoryOf(x) == plan.Category)
             .OrderByDescending(x => x.Confidence)
             .ToList();
 
-    private static int RunScan(CleanupService service, Reporter reporter, CliPlan plan)
+    private static IReadOnlyList<Finding> Scanned(CleanupService service, Reporter reporter, CancellationToken token)
     {
-        var findings = Reportable(service, plan);
+        var outcome = service.Scan(token);
+        foreach (var failure in outcome.Failures)
+            reporter.Note($"category '{failure.Category}' failed: {failure.Message}");
+        return outcome.Findings;
+    }
+
+    private static int RunScan(CleanupService service, Reporter reporter, CliPlan plan, CancellationToken token)
+    {
+        var findings = Reportable(service, reporter, plan, token);
         foreach (var finding in findings) reporter.Finding(finding, service.CategoryOf(finding));
         reporter.Note($"{findings.Count} findings, {findings.Count(x => x.Status == EntryStatus.Broken)} broken");
         return findings.Count == 0 ? ExitClean : ExitFindings;
     }
 
-    private static int RunFix(CleanupService service, Reporter reporter, CliPlan plan)
+    private static int RunFix(CleanupService service, Reporter reporter, CliPlan plan, CancellationToken token)
     {
+        var scanned = Scanned(service, reporter, token);
         var targets = plan.All
-            ? service.AutoFixable(service.Scan()).Where(x => x.Confidence >= plan.MinConfidence).ToList()
-            : service.Scan().Where(x => x.Id == plan.Id).ToList();
+            ? service.AutoFixable(scanned).Where(x => x.Confidence >= plan.MinConfidence).ToList()
+            : scanned.Where(x => x.Id == plan.Id).ToList();
 
         if (!plan.All && targets.Count == 0)
         {
@@ -140,5 +162,8 @@ public static class Program
         output.WriteLine();
         output.WriteLine("fix --all only touches findings that clear the automatic threshold;");
         output.WriteLine("leftover folders and MSIX packages never take part in it.");
+        output.WriteLine();
+        output.WriteLine("Ctrl+C cancels a scan and exits with code 2; a fix already under way is");
+        output.WriteLine("never cancelled, because stopping between backup and removal is worse.");
     }
 }

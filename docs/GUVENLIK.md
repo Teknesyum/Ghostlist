@@ -45,6 +45,11 @@ kaldırıcı hedefi aynı dosyaysa ya da `InstallLocation` ile hedef klasör ayn
 - **Çözülemeyen komut korunur.** Ayrıştırılamayan bir kaldırma komutu bulguyu bozuk yapmaz.
 - **Yedeksiz silme yoktur.** Registry ağacı, Registry değeri, görev XML'i ve dosya —
   hepsi önce yedeklenir.
+- **Düzeltme iptal edilmez.** Tarama iptal edilebilir (GUI'de "Durdur", CLI'da Ctrl+C,
+  çıkış kodu 2) ve iptal edilen taramanın yarım bulguları atılır. Düzeltme ise iptal
+  kabul etmez: yedek alınmış ve silme başlamışken yarıda kesmek yarım iş bırakır.
+  `IIssueProvider.Fix` ve `CleanupService.Fix` bilerek `CancellationToken` almaz;
+  bu `ParallelScanTests.FixIsNotCancellable` ile sabitlenmiştir.
 
 ## 4. Toplu düzeltmenin kapsamı
 

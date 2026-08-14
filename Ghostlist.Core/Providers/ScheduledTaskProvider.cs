@@ -36,7 +36,7 @@ public sealed class ScheduledTaskProvider(IEnvironmentPaths paths, IFileSystem f
     public string Id => Categories.Task;
     public string Category => Categories.Task;
 
-    public IReadOnlyList<Finding> Scan()
+    public IReadOnlyList<Finding> Scan(CancellationToken token = default)
     {
         var root = paths.ScheduledTaskRoot;
         var files = fileSystem.TryListFiles(root, "*", recursive: true);
@@ -45,6 +45,7 @@ public sealed class ScheduledTaskProvider(IEnvironmentPaths paths, IFileSystem f
         var findings = new List<Finding>();
         foreach (var file in files)
         {
+            token.ThrowIfCancellationRequested();
             var taskName = TaskName(root, file);
             if (taskName.StartsWith(MicrosoftBranch, StringComparison.OrdinalIgnoreCase)) continue;
             var document = ReadTask(file);
