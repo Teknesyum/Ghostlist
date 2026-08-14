@@ -3,6 +3,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Ghostlist.Core\Ghostlist.Core.csproj" />
     <Resource Include="Assets\ghostlist.ico" />
+    <EmbeddedResource Include="Localization\*.json" />
   </ItemGroup>
 
   <PropertyGroup>
