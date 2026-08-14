@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Ghostlist.Core\Ghostlist.Core.csproj" />
+    <ProjectReference Include="..\Ghostlist.Cli\Ghostlist.Cli.csproj" />
   </ItemGroup>
 
 </Project>

@@ -258,6 +258,7 @@ public sealed class MainViewModel : ObservableObject
         if (!accepted) return;
 
         IsBusy = true;
+        await Task.Run(() => SystemRestore.TryCreate("Ghostlist bulk fix"));
         var completed = 0;
         var manual = new List<string>();
         var failures = new List<string>();

@@ -12,3 +12,5 @@
 2026-08-14 T4  done: kisayol/baslangic/gorev/artik-klasor saglayicilari, COM-suz ShellLinkReader, IBackupSink deger+klasor yedegi, IFileSystem 5 yeni uye, DeleteValue; build 0 uyari, test 132/132
 2026-08-14 T4  owns genisletildi: EntryClassifier.cs + IIssueProvider.cs + Models.cs + CleanupService.cs (T3), RegistryRepository.cs + InMemoryRegistryHiveAccessor.cs (T2, DeleteValue), Providers/EnvironmentPaths.cs + ShellLinkReader.cs (yeni yardimci)
 2026-08-14 T5  done: Localization tabanli TR/EN gecisi (115 anahtar, anlik, settings.json), MVVM ayrimi, gruplu sanallastirilmis liste + sayi rozeti, kanit paneli, yonetici rozeti/kilitli HKLM satirlari, MessageBox yerine uygulama ici diyalog; build 0 uyari, test 132/132
+2026-08-14 T6  done: Ghostlist.Cli (scan/fix/restore, --json JSONL, --dry-run, cikis 0/1/2, --all icin --yes), SystemRestore.TryCreate (sessiz false), ci.yml + release.yml (self-contained tek dosya, SHA256, imzasiz); build 0 uyari, test 153/153
+2026-08-14 T6  owns genisletildi: Ghostlist.Tests.csproj (CLI proje basvurusu), ViewModels/MainViewModel.cs (T5, toplu duzeltme oncesi geri yukleme noktasi), .gitignore (publish/ + release zip)

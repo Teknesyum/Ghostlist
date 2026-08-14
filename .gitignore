@@ -1,6 +1,9 @@
 bin/
 obj/
 artifacts/
+publish/
+Ghostlist-win-x64.zip
+Ghostlist-win-x64.zip.sha256
 .vs/
 *.user
 *.suo

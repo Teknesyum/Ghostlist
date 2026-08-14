@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ghostlist.Core", "Ghostlist
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ghostlist.Tests", "Ghostlist.Tests\Ghostlist.Tests.csproj", "{532BEE5F-43F8-4DBD-92F2-B1B18A645CB7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ghostlist.Cli", "Ghostlist.Cli\Ghostlist.Cli.csproj", "{390DBD90-EA18-49B6-93A5-1249ADBD873E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,18 @@ Global
 		{532BEE5F-43F8-4DBD-92F2-B1B18A645CB7}.Release|x64.Build.0 = Release|Any CPU
 		{532BEE5F-43F8-4DBD-92F2-B1B18A645CB7}.Release|x86.ActiveCfg = Release|Any CPU
 		{532BEE5F-43F8-4DBD-92F2-B1B18A645CB7}.Release|x86.Build.0 = Release|Any CPU
+		{390DBD90-EA18-49B6-93A5-1249ADBD873E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{390DBD90-EA18-49B6-93A5-1249ADBD873E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{390DBD90-EA18-49B6-93A5-1249ADBD873E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{390DBD90-EA18-49B6-93A5-1249ADBD873E}.Debug|x64.Build.0 = Debug|Any CPU
+		{390DBD90-EA18-49B6-93A5-1249ADBD873E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{390DBD90-EA18-49B6-93A5-1249ADBD873E}.Debug|x86.Build.0 = Debug|Any CPU
+		{390DBD90-EA18-49B6-93A5-1249ADBD873E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{390DBD90-EA18-49B6-93A5-1249ADBD873E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{390DBD90-EA18-49B6-93A5-1249ADBD873E}.Release|x64.ActiveCfg = Release|Any CPU
+		{390DBD90-EA18-49B6-93A5-1249ADBD873E}.Release|x64.Build.0 = Release|Any CPU
+		{390DBD90-EA18-49B6-93A5-1249ADBD873E}.Release|x86.ActiveCfg = Release|Any CPU
+		{390DBD90-EA18-49B6-93A5-1249ADBD873E}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
