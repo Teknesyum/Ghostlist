@@ -97,7 +97,8 @@ public sealed class StartupProvider(
             {
                 token.ThrowIfCancellationRequested();
                 var link = ShellLinkReader.Read(fileSystem.TryReadBytes(file));
-                if (link?.LocalPath is null || link.IsNetworkTarget) continue;
+                if (link is null || link.IsAmbiguous) continue;
+                if (link.LocalPath is null || link.IsNetworkTarget) continue;
                 if (!fileSystem.IsFixedVolume(link.LocalPath)) continue;
                 var evidence = Assess(link.LocalPath, EvidenceKinds.StartupTargetMissing, EvidenceWeights.StartupTargetMissing);
                 if (evidence.Count == 0) continue;

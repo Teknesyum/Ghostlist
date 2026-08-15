@@ -35,7 +35,8 @@ public sealed class ShortcutProvider(IEnvironmentPaths paths, IFileSystem fileSy
     private Finding? Inspect(string shortcutPath)
     {
         var link = ShellLinkReader.Read(fileSystem.TryReadBytes(shortcutPath));
-        if (link?.LocalPath is null || link.IsNetworkTarget) return null;
+        if (link is null || link.IsAmbiguous) return null;
+        if (link.LocalPath is null || link.IsNetworkTarget) return null;
         if (!fileSystem.IsFixedVolume(link.LocalPath)) return null;
         if (fileSystem.ProbeFile(link.LocalPath) != ProbeResult.Missing) return null;
 

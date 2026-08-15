@@ -108,7 +108,7 @@ dotnet publish Ghostlist.Cli -c Release -r win-x64 --self-contained true -p:Publ
 
 ## Release
 
-Current version: **v2.0.0** (formerly ProgramFixer)
+Current version: **v2.0.1** (formerly ProgramFixer)
 
 Version 2 renames the project, widens it from uninstall entries alone to six categories, replaces the old pass/fail check with evidence-based scoring, and changes the backup format. Backups taken by version 1 are migrated on first launch.
 

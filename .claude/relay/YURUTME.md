@@ -16,11 +16,14 @@ Bağlamı `PLAN.md`'den al. Sözleşmeler `contracts/`, bitenler `contracts/done
 **Tur 1 ve tur 2 bitti.** T1-T12 `done/` altında, 283 test yeşil, son commit `93a1498`
 (v2.0.0), çalışma ağacı temiz. Hiçbir şey gönderilmedi.
 
-**Tur 3 senin işin: T13 — yayın zinciri.** Tek sözleşme.
+**T13 (yayın zinciri) koordinatör tarafından yapıldı.** v2.0.0 canlıda, depo
+`github.com/Teknesyum/Ghostlist`, kurulum zinciri gerçek koşulda doğrulandı.
 
-Depo adını değiştirmek, push, etiket, release, winget hash ve kurulum betiğini gerçek
-yayına karşı denemek dahil. Bunları kullanıcıya bırakma; `gh` kurulu ve yetkili.
-Sözleşmedeki yasak listesine uy — orada yazan dört şey dışında her adımı kendin at.
+**Tur 4 senin işin: T14 — canlı sürümdeki yanlış pozitif hatası.** Tek sözleşme.
+
+Saf kod işi: kodlama hatası, testler, sürüm bumpı, commit. **Push, tag, release yok** —
+uzağa hiçbir şey gönderme, yayın koordinatörde. Dış dünyaya dokunan hiçbir adım
+bu sözleşmede yok.
 
 ## Her sözleşme için döngü
 
