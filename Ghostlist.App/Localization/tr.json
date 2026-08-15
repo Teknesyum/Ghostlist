@@ -166,6 +166,18 @@
   "status.exported": "{count} bulgu {path} dosyasına yazıldı.",
   "status.diagnosticsWritten": "Tanılama paketi {path} dosyasına yazıldı. Gönderilmedi.",
 
+  "update.available": "Yeni sürüm var: v{version}",
+  "update.notes": "Sürüm notları",
+  "update.dismiss": "Kapat",
+  "update.check": "Güncellemeleri denetle",
+  "update.auto": "Açılışta güncelleme denetle",
+  "update.autoTip": "Kapalıyken Ghostlist hiçbir ağ çağrısı yapmaz. Denetim yalnızca sürüm etiketini okur, indirme veya kurulum yapmaz.",
+  "update.state.disabled": "Otomatik denetim kapalı.",
+  "update.state.too_soon": "Bugün zaten denetlendi.",
+  "update.state.up_to_date": "En son sürümü kullanıyorsun.",
+  "update.state.available": "Yeni bir sürüm yayınlanmış.",
+  "update.state.unreachable": "Sürüm bilgisi alınamadı. Bir şey değişmedi.",
+
   "status.ready": "Hazır",
   "status.scanning": "{category} taranıyor…",
   "status.scanDone": "{total} bulgu incelendi, {broken} tanesi bozuk.",

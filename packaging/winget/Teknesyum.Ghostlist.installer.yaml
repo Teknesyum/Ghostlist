@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=https://aka.ms/winget-manifest.installer.1.6.0.schema.json
+PackageIdentifier: Teknesyum.Ghostlist
+PackageVersion: 2.0.0
+MinimumOSVersion: 10.0.19041.0
+InstallerType: zip
+NestedInstallerType: portable
+NestedInstallerFiles:
+- RelativeFilePath: Ghostlist.exe
+  PortableCommandAlias: ghostlist-ui
+- RelativeFilePath: cli\ghostlist.exe
+  PortableCommandAlias: ghostlist
+UpgradeBehavior: install
+ReleaseDate: 2026-08-15
+Installers:
+- Architecture: x64
+  InstallerUrl: https://github.com/Teknesyum/Ghostlist/releases/download/v2.0.0/Ghostlist-win-x64.zip
+  InstallerSha256: 0000000000000000000000000000000000000000000000000000000000000000
+ManifestType: installer
+ManifestVersion: 1.6.0

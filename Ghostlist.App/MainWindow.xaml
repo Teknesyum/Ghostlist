@@ -247,6 +247,23 @@
                                  IsChecked="{Binding ShowFindings, Mode=OneWay}" Command="{Binding ShowFindingsCommand}"/>
                     <RadioButton Style="{StaticResource ViewTab}" Content="{local:Loc tab.backups}"
                                  IsChecked="{Binding ShowBackups, Mode=OneWay}" Command="{Binding ShowBackupsCommand}"/>
+
+                    <Border Margin="16,0,0,0" Padding="12,5" CornerRadius="12" VerticalAlignment="Center"
+                            Background="#1A34D399" BorderBrush="#5034D399" BorderThickness="1"
+                            Visibility="{Binding Updates.IsVisible, Converter={StaticResource BoolToVis}}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock FontSize="13" VerticalAlignment="Center"
+                                       Foreground="{StaticResource NeonSuccess}" Text="{Binding Updates.BannerText}"/>
+                            <Button Style="{StaticResource QuietButton}" Margin="10,0,0,0"
+                                    Content="{local:Loc update.notes}" Command="{Binding Updates.OpenReleaseCommand}"/>
+                            <Button Style="{StaticResource QuietButton}" Margin="4,0,0,0"
+                                    Content="{local:Loc update.dismiss}" Command="{Binding Updates.DismissCommand}"/>
+                        </StackPanel>
+                    </Border>
+
+                    <TextBlock Margin="16,0,0,0" VerticalAlignment="Center" FontSize="13"
+                               Foreground="{StaticResource TextDim}" Text="{Binding Updates.ManualMessage}"
+                               Visibility="{Binding Updates.HasManualMessage, Converter={StaticResource BoolToVis}}"/>
                 </StackPanel>
 
                 <Grid Grid.Row="2" Visibility="{Binding ShowFindings, Converter={StaticResource BoolToVis}}">
@@ -408,6 +425,11 @@
                         <TextBlock Foreground="{StaticResource TextLabel}" Text="{local:Loc footer.safety}"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                        <CheckBox Margin="0,0,10,0" VerticalAlignment="Center" Content="{local:Loc update.auto}"
+                                  ToolTip="{local:Loc update.autoTip}" IsChecked="{Binding Updates.AutomaticCheck, Mode=TwoWay}"/>
+                        <Button Style="{StaticResource QuietButton}" Margin="0,0,14,0"
+                                Content="{local:Loc update.check}" ToolTip="{local:Loc update.autoTip}"
+                                Command="{Binding Updates.CheckCommand}"/>
                         <TextBlock Margin="0,0,14,0"><Hyperlink Style="{StaticResource FooterLink}" NavigateUri="https://github.com/sponsors/Teknesyum" RequestNavigate="FooterLink_RequestNavigate"><Run Text="{local:Loc footer.sponsor}"/></Hyperlink></TextBlock>
                         <TextBlock><Hyperlink Style="{StaticResource FooterLink}" NavigateUri="https://github.com/Teknesyum" RequestNavigate="FooterLink_RequestNavigate"><Run Text="{local:Loc footer.signature}"/></Hyperlink></TextBlock>
                     </StackPanel>

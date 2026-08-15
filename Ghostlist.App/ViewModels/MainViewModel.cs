@@ -51,6 +51,10 @@ public sealed class MainViewModel : ObservableObject
         Export = new ExportCommands(service, () => all.Select(x => x.Model).ToList(), Diagnostics, ShowDialogAsync,
             message => StatusMessage = message);
 
+        Updates = new UpdateBannerViewModel(
+            new UpdateChecker(new GitHubReleaseSource(), settings, SemanticVersion.TryParse(VersionNumber) ?? new SemanticVersion(0, 0, 0)),
+            settings);
+
         ScanCommand = new RelayCommand(async () => await ScanAsync(), () => !IsBusy);
         StopScanCommand = new RelayCommand(StopScan, () => Progress.IsRunning);
         ExportReportCommand = new RelayCommand(async () => await Guarded(Export.ExportReportAsync), () => !IsBusy);
@@ -96,6 +100,8 @@ public sealed class MainViewModel : ObservableObject
     public ScanProgressViewModel Progress { get; } = new();
 
     public ExportCommands Export { get; }
+
+    public UpdateBannerViewModel Updates { get; }
 
     public bool ShowBackups
     {
@@ -172,6 +178,7 @@ public sealed class MainViewModel : ObservableObject
     {
         UseLanguage(settings.Language);
         await ScanAsync();
+        await Updates.CheckAsync(manual: false);
     }
 
     private void UseLanguage(string language)
@@ -187,6 +194,7 @@ public sealed class MainViewModel : ObservableObject
         StatusMessage = Strings.Current.Get("status.ready");
         foreach (var group in groups.Values) group.RefreshLanguage();
         Progress.RefreshLanguage();
+        Updates.RefreshLanguage();
         foreach (var item in all) item.RefreshLanguage();
         Raise(nameof(VersionText));
         Raise(nameof(AdminText));

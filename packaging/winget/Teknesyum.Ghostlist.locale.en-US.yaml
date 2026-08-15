@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=https://aka.ms/winget-manifest.defaultLocale.1.6.0.schema.json
+PackageIdentifier: Teknesyum.Ghostlist
+PackageVersion: 2.0.0
+PackageLocale: en-US
+Publisher: Teknesyum
+PublisherUrl: https://github.com/Teknesyum
+PublisherSupportUrl: https://github.com/Teknesyum/Ghostlist/issues
+PackageName: Ghostlist
+PackageUrl: https://github.com/Teknesyum/Ghostlist
+License: MIT
+LicenseUrl: https://github.com/Teknesyum/Ghostlist/blob/main/LICENSE
+Copyright: Copyright (c) 2026 Teknesyum
+ShortDescription: Find and fix the records Windows leaves behind after an uninstall.
+Description: |-
+  Ghostlist finds the leftovers an uninstall does not clean up: dead uninstall
+  entries, broken shortcuts, startup entries pointing at missing files, scheduled
+  tasks whose executable is gone, abandoned program folders and staged MSIX
+  packages.
+
+  Every change is backed up first and can be reversed. Ghostlist never runs a
+  vendor uninstall command, never removes an MSIX package on its own, and never
+  touches user documents or saved games. Automatic bulk fixing only applies to
+  findings with at least two independent pieces of evidence.
+Moniker: ghostlist
+Tags:
+- cleanup
+- maintenance
+- registry
+- uninstall
+- windows
+ReleaseNotesUrl: https://github.com/Teknesyum/Ghostlist/releases/tag/v2.0.0
+ManifestType: defaultLocale
+ManifestVersion: 1.6.0

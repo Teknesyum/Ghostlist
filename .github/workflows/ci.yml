@@ -32,6 +32,23 @@ jobs:
             Write-Host "README version line matches Directory.Build.props ($propsVersion)."
           }
 
+      - name: Check winget manifest version
+        shell: pwsh
+        run: |
+          $props = [xml](Get-Content Directory.Build.props -Raw)
+          $propsVersion = $props.Project.PropertyGroup.Version
+          $failed = $false
+          foreach ($file in Get-ChildItem packaging/winget -Filter *.yaml) {
+            $line = Get-Content $file.FullName | Where-Object { $_ -match '^PackageVersion:' }
+            $value = ($line -replace '^PackageVersion:\s*', '').Trim()
+            if ($value -ne $propsVersion) {
+              Write-Host "::error::$($file.Name) has PackageVersion $value but Directory.Build.props says $propsVersion."
+              $failed = $true
+            }
+          }
+          if ($failed) { exit 1 }
+          Write-Host "winget manifest version matches Directory.Build.props ($propsVersion)."
+
       - name: Restore
         run: dotnet restore Ghostlist.sln
 

@@ -3,9 +3,13 @@ using System.Text.Json;
 
 namespace Ghostlist.App;
 
-public sealed class AppSettings
+public sealed class AppSettings : Ghostlist.Core.IUpdateSettings
 {
     public string Language { get; set; } = Strings.Turkish;
+
+    public bool AutomaticUpdateCheck { get; set; }
+
+    public DateTimeOffset? LastUpdateCheck { get; set; }
 
     public static string SettingsPath => Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Ghostlist", "settings.json");

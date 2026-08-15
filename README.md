@@ -52,6 +52,14 @@ irm https://raw.githubusercontent.com/Teknesyum/Ghostlist/main/scripts/install.p
 
 The installer downloads the latest Windows x64 release, installs Ghostlist to `%LOCALAPPDATA%\Programs\Ghostlist`, creates a **Ghostlist** desktop shortcut, and opens the application. Administrator rights are not needed to install. Findings under `HKLM` show as locked in a normal session; the app has a **Restart as administrator** button in the top bar when you need them.
 
+Once the package is published to the winget community repository, this will also work:
+
+```powershell
+winget install Teknesyum.Ghostlist
+```
+
+The manifest is ready in `packaging/winget/` but has not been submitted yet.
+
 ## Command line
 
 The release archive also contains `cli\ghostlist.exe`, a console front end over the same engine as the desktop app. Its output is English.

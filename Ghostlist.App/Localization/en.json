@@ -166,6 +166,18 @@
   "status.exported": "{count} findings written to {path}.",
   "status.diagnosticsWritten": "Diagnostics bundle written to {path}. Nothing was sent.",
 
+  "update.available": "A new version is available: v{version}",
+  "update.notes": "Release notes",
+  "update.dismiss": "Dismiss",
+  "update.check": "Check for updates",
+  "update.auto": "Check for updates on start",
+  "update.autoTip": "While this is off Ghostlist makes no network call. A check only reads the version tag; it never downloads or installs.",
+  "update.state.disabled": "Automatic checking is off.",
+  "update.state.too_soon": "Already checked today.",
+  "update.state.up_to_date": "You are on the latest version.",
+  "update.state.available": "A newer version has been published.",
+  "update.state.unreachable": "Could not read the release information. Nothing changed.",
+
   "status.ready": "Ready",
   "status.scanning": "Scanning {category}…",
   "status.scanDone": "{total} findings reviewed, {broken} of them broken.",
