@@ -14,6 +14,6 @@ ReleaseDate: 2026-08-15
 Installers:
 - Architecture: x64
   InstallerUrl: https://github.com/Teknesyum/Ghostlist/releases/download/v2.0.0/Ghostlist-win-x64.zip
-  InstallerSha256: 0000000000000000000000000000000000000000000000000000000000000000
+  InstallerSha256: 47B05D9A8D8493BEF40C3FE238621E88515F748BB38E76B700B760F38959896B
 ManifestType: installer
 ManifestVersion: 1.6.0

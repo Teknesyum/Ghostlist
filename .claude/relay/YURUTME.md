@@ -13,20 +13,14 @@ Bağlamı `PLAN.md`'den al. Sözleşmeler `contracts/`, bitenler `contracts/done
 
 ## Durum
 
-**Tur 1 bitti.** T1-T7 `done/` altında, 153 test yeşil, son commit `4e3091e` (v2.0.0).
-Push atılmadı — depoya çıkan her şey kullanıcının kararı.
+**Tur 1 ve tur 2 bitti.** T1-T12 `done/` altında, 283 test yeşil, son commit `93a1498`
+(v2.0.0), çalışma ağacı temiz. Hiçbir şey gönderilmedi.
 
-**Tur 2 senin işin:** T8, T9, T10, T11, T12.
+**Tur 3 senin işin: T13 — yayın zinciri.** Tek sözleşme.
 
-## Sıra
-
-```
-T8  →  T12          (T12, T8'in Directory.Build.props'una bağlı)
-T9                  (bağımsız)
-T10 →  T11          (T11, T10'un imzalarına bağlı)
-```
-
-Şu sırayla git: **T8 → T9 → T10 → T11 → T12.** Atlama, sıra değiştirme.
+Depo adını değiştirmek, push, etiket, release, winget hash ve kurulum betiğini gerçek
+yayına karşı denemek dahil. Bunları kullanıcıya bırakma; `gh` kurulu ve yetkili.
+Sözleşmedeki yasak listesine uy — orada yazan dört şey dışında her adımı kendin at.
 
 ## Her sözleşme için döngü
 
@@ -76,7 +70,8 @@ Bunlar kullanıcı verisi ve güven meselesi; ihlali ürünü bitirir.
 
 ## Bu turda ayrıca yasak
 
-- **Push, tag, release yayını yok.** Commit serbest, uzağa hiçbir şey gitmez.
+- **Force push, geçmiş yeniden yazma, `main` üzerinde `--force` yok.** Push ve etiket
+  serbest (T13 bunun için var); geri alınamaz olan yasak.
 - **Ağa çıkan hiçbir şey varsayılan olarak açık olmaz.** Güncelleme kontrolü kapalı gelir.
 - **Telemetri yok.** Tanılama paketi kullanıcının diskinde kalır, hiçbir yere gönderilmez.
 - Kod imzalama yok — sertifika yok. SHA256 doğrulaması bunun yerine geçmez, tamamlar.
