@@ -1,12 +1,12 @@
 {
-  "toplam": 42,
+  "toplam": 45,
   "ajanli": 3,
   "olaylar": {
-    "PostToolUse": 39,
+    "PostToolUse": 42,
     "SubagentStop": 3
   },
   "ilk": "2026-08-14 23:01:02",
-  "son": "2026-08-15 08:09:18",
+  "son": "2026-08-15 08:09:53",
   "ornek_alanlar": [
     "cwd",
     "duration_ms",
