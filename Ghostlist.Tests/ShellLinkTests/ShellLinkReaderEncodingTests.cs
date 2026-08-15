@@ -5,17 +5,37 @@ namespace Ghostlist.Tests.ShellLinkTests;
 
 public class ShellLinkReaderEncodingTests
 {
+    static ShellLinkReaderEncodingTests() => Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
     [Fact]
-    public void AnsiTurkishTargetIsDecodedWithTheSystemCodePageInsteadOfUtf8()
+    public void AnsiTurkishTargetIsDecodedWithTheTurkishCodePageInsteadOfUtf8()
     {
+        var turkish = Encoding.GetEncoding(1254, EncoderFallback.ExceptionFallback, DecoderFallback.ExceptionFallback);
         var basePathBytes = new byte[] { 0x43, 0x3A, 0x5C, 0x4B, 0xFD, 0x73, 0x61, 0x79, 0x6F, 0x6C, 0x5C };
         var suffixBytes = new byte[] { 0x68, 0x77, 0x69, 0x2E, 0x65, 0x78, 0x65 };
+
+        var link = ShellLinkReader.Read(BuildAnsiOnly(basePathBytes, suffixBytes), turkish);
+
+        Assert.NotNull(link);
+        Assert.False(link.IsAmbiguous);
+        Assert.Equal(@"C:\Kısayol\hwi.exe", link.LocalPath);
+    }
+
+    [Fact]
+    public void AnsiTargetRoundTripsThroughWhateverCodePageThisMachineUses()
+    {
+        var ansi = ShellLinkReader.SystemAnsiEncoding;
+        Assert.NotNull(ansi);
+        Assert.NotEqual(65001, ansi.CodePage);
+
+        var basePathBytes = ansi.GetBytes(@"C:\Café\");
+        var suffixBytes = ansi.GetBytes("app.exe");
 
         var link = ShellLinkReader.Read(BuildAnsiOnly(basePathBytes, suffixBytes));
 
         Assert.NotNull(link);
         Assert.False(link.IsAmbiguous);
-        Assert.Equal(@"C:\Kısayol\hwi.exe", link.LocalPath);
+        Assert.Equal(@"C:\Café\app.exe", link.LocalPath);
     }
 
     [Fact]

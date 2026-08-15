@@ -20,8 +20,13 @@ public static class ShellLinkReader
 
     private static readonly Encoding? AnsiEncoding = ResolveAnsiEncoding();
 
-    public static ShellLinkTarget? Read(byte[]? content)
+    public static Encoding? SystemAnsiEncoding => AnsiEncoding;
+
+    public static ShellLinkTarget? Read(byte[]? content) => Read(content, null);
+
+    public static ShellLinkTarget? Read(byte[]? content, Encoding? ansiEncoding)
     {
+        var ansi = ansiEncoding ?? AnsiEncoding;
         if (content is null || content.Length < HeaderSize) return null;
         if (BitConverter.ToInt32(content, 0) != HeaderSize) return null;
 
@@ -62,11 +67,11 @@ public static class ShellLinkReader
         {
             var ansiBaseOffset = BitConverter.ToInt32(content, linkInfo + 16);
             var ansiSuffixOffset = BitConverter.ToInt32(content, linkInfo + 24);
-            basePath = ReadAnsiString(content, linkInfo + ansiBaseOffset, out var baseAmbiguous);
+            basePath = ReadAnsiString(content, linkInfo + ansiBaseOffset, ansi, out var baseAmbiguous);
             ambiguous = baseAmbiguous;
             if (ansiSuffixOffset != 0)
             {
-                suffix = ReadAnsiString(content, linkInfo + ansiSuffixOffset, out var suffixAmbiguous);
+                suffix = ReadAnsiString(content, linkInfo + ansiSuffixOffset, ansi, out var suffixAmbiguous);
                 ambiguous = ambiguous || suffixAmbiguous;
             }
             else
@@ -82,13 +87,13 @@ public static class ShellLinkReader
         return new ShellLinkTarget(full, full.StartsWith(@"\\", StringComparison.Ordinal));
     }
 
-    private static string? ReadAnsiString(byte[] content, int start, out bool ambiguous)
+    private static string? ReadAnsiString(byte[] content, int start, Encoding? encoding, out bool ambiguous)
     {
         ambiguous = false;
         if (start < 0 || start >= content.Length) return null;
         var end = Array.IndexOf(content, (byte)0, start);
         if (end < 0) end = content.Length;
-        if (AnsiEncoding is null)
+        if (encoding is null)
         {
             ambiguous = true;
             return null;
@@ -96,7 +101,7 @@ public static class ShellLinkReader
         string decoded;
         try
         {
-            decoded = AnsiEncoding.GetString(content, start, end - start);
+            decoded = encoding.GetString(content, start, end - start);
         }
         catch (DecoderFallbackException)
         {
