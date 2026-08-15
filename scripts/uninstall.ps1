@@ -3,7 +3,11 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
-$installDirectory = Split-Path -Parent $PSCommandPath
+$installDirectory = Join-Path $env:LOCALAPPDATA "Programs\Ghostlist"
+if (-not (Test-Path -LiteralPath (Join-Path $installDirectory "Ghostlist.exe"))) {
+    Write-Host "Ghostlist does not look installed at $installDirectory. Nothing was removed." -ForegroundColor Yellow
+    exit 7
+}
 $desktop = [Environment]::GetFolderPath([Environment+SpecialFolder]::Desktop)
 $shortcutPath = Join-Path $desktop "Ghostlist.lnk"
 $backupDirectory = Join-Path $env:LOCALAPPDATA "Ghostlist\Backups"
