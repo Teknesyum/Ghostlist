@@ -47,7 +47,7 @@ Backups live under:
 ## Install with one PowerShell command
 
 ```powershell
-irm https://raw.githubusercontent.com/Teknesyum/Ghostlist/main/scripts/install.ps1 | iex
+irm https://raw.githubusercontent.com/Teknesyum/Ghostlist/refs/heads/main/scripts/install.ps1 | iex
 ```
 
 The installer downloads the latest Windows x64 release, installs Ghostlist to `%LOCALAPPDATA%\Programs\Ghostlist`, creates a **Ghostlist** desktop shortcut, and opens the application. Administrator rights are not needed to install. Findings under `HKLM` show as locked in a normal session; the app has a **Restart as administrator** button in the top bar when you need them.
