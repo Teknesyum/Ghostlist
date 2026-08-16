@@ -22,6 +22,24 @@ function Write-Failure {
     $script:exitCode = $Code
 }
 
+function Get-Sha256 {
+    param([Parameter(Mandatory = $true)][string]$Path)
+
+    $stream = [System.IO.File]::OpenRead($Path)
+    try {
+        $sha256 = [System.Security.Cryptography.SHA256]::Create()
+        try {
+            return ([System.BitConverter]::ToString($sha256.ComputeHash($stream))).Replace("-", "").ToLowerInvariant()
+        }
+        finally {
+            $sha256.Dispose()
+        }
+    }
+    finally {
+        $stream.Dispose()
+    }
+}
+
 try {
     New-Item -ItemType Directory -Force -Path $tempDirectory, $extractPath | Out-Null
 
@@ -49,7 +67,7 @@ try {
             throw [System.Management.Automation.RuntimeException]::new("HASH|The checksum file $hashUrl is empty or malformed.")
         }
         $expected = $expected.ToLowerInvariant()
-        $actual = (Get-FileHash -LiteralPath $archivePath -Algorithm SHA256).Hash.ToLowerInvariant()
+        $actual = Get-Sha256 -Path $archivePath
         if ($expected -ne $actual) {
             Remove-Item -LiteralPath $archivePath -Force -ErrorAction SilentlyContinue
             throw [System.Management.Automation.RuntimeException]::new("HASH|Integrity check failed. Expected SHA256 $expected but the downloaded file is $actual. The archive was deleted and nothing was installed.")
