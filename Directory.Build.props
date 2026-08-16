@@ -1,11 +1,14 @@
 <Project>
 
   <PropertyGroup>
-    <Version>2.0.1</Version>
-    <AssemblyVersion>2.0.1.0</AssemblyVersion>
-    <FileVersion>2.0.1.0</FileVersion>
+    <Version>2.0.2</Version>
+    <AssemblyVersion>2.0.2.0</AssemblyVersion>
+    <FileVersion>2.0.2.0</FileVersion>
     <Company>Teknesyum</Company>
     <Product>Ghostlist</Product>
+    <Authors>Teknesyum</Authors>
+    <AssemblyTitle>Ghostlist</AssemblyTitle>
+    <Description>Ghostlist finds and safely removes leftover Windows uninstall residue.</Description>
     <Copyright>Copyright (c) 2026 Teknesyum</Copyright>
   </PropertyGroup>
 

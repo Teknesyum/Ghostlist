@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=https://aka.ms/winget-manifest.defaultLocale.1.6.0.schema.json
 PackageIdentifier: Teknesyum.Ghostlist
-PackageVersion: 2.0.1
+PackageVersion: 2.0.2
 PackageLocale: en-US
 Publisher: Teknesyum
 PublisherUrl: https://github.com/Teknesyum

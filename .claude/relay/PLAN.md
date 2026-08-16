@@ -65,3 +65,11 @@ T11 rapor+tani ──────┘
 - **Kod imzalama yok** — sertifika yok. SHA256 doğrulaması bunun yerine geçmez, tamamlar.
 - Otomatik güncelleme indirme/kurma yok; ürün yalnızca **haber verir**.
 - Telemetri yok. Tanılama paketi kullanıcının elinde kalır, hiçbir yere gönderilmez.
+
+## Sonraki tur
+
+- GitHub'daki `ProgramFixer v1.0.0` yayın (release) başlığı hâlâ duruyor
+  (`gh release list` → `ProgramFixer v1.0.0  v1.0.0  2026-08-13T18:53:41Z`). T16 bunu
+  teşhis etti ama düzeltemedi — bu sözleşmede push/tag/release yasak. Yayın
+  koordinatörü başlığı `gh release edit v1.0.0 --title "..."` ile güncellesin veya
+  gövdeye "eski ad" notu eklesin.
