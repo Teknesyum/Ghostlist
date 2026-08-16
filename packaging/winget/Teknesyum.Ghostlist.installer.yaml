@@ -10,10 +10,10 @@ NestedInstallerFiles:
 - RelativeFilePath: cli\ghostlist.exe
   PortableCommandAlias: ghostlist
 UpgradeBehavior: install
-ReleaseDate: 2026-08-15
+ReleaseDate: 2026-08-16
 Installers:
 - Architecture: x64
   InstallerUrl: https://github.com/Teknesyum/Ghostlist/releases/download/v2.0.2/Ghostlist-win-x64.zip
-  InstallerSha256: 0000000000000000000000000000000000000000000000000000000000000000
+  InstallerSha256: 1CB151E7A4684033ACA90AC79BFCA5F15232E19A38335F091BB34B970DCE598D
 ManifestType: installer
 ManifestVersion: 1.6.0
